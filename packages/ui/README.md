@@ -1,12 +1,12 @@
 <!-- markdownlint-disable MD030 -->
 
-# Flowise UI
+# Nuggets UI
 
 English | [中文](./README-ZH.md)
 
-React frontend ui for Flowise.
+React frontend ui for Nuggets.
 
-![Flowise](https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true)
+![Nuggets](https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true)
 
 Install:
 
