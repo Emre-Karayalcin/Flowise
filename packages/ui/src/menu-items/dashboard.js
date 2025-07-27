@@ -23,7 +23,8 @@ import {
     IconLockCheck,
     IconFileDatabase,
     IconShieldLock,
-    IconListCheck
+    IconListCheck,
+    IconDashboard
 } from '@tabler/icons-react'
 
 // constant
@@ -51,7 +52,8 @@ const icons = {
     IconLockCheck,
     IconFileDatabase,
     IconShieldLock,
-    IconListCheck
+    IconListCheck,
+    IconDashboard
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -66,6 +68,14 @@ const dashboard = {
             title: '',
             type: 'group',
             children: [
+                {
+                    id: 'dashboard',
+                    title: 'Dashboard',
+                    type: 'item',
+                    url: '/dashboard',
+                    icon: icons.IconDashboard,
+                    breadcrumbs: true,
+                },
                 {
                     id: 'chatflows',
                     title: 'Chatflows',

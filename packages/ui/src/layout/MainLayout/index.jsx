@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom' // Thêm useLocation
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles'
@@ -59,6 +59,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 const MainLayout = () => {
     const theme = useTheme()
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'))
+    const location = useLocation()
 
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened)
@@ -71,6 +72,8 @@ const MainLayout = () => {
         setTimeout(() => dispatch({ type: SET_MENU, opened: !matchDownMd }), 0)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matchDownMd])
+
+    const isDashboard = location.pathname === '/dashboard'
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -95,7 +98,11 @@ const MainLayout = () => {
             <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
             {/* main content */}
-            <Main theme={theme} open={leftDrawerOpened}>
+            <Main
+                theme={theme}
+                open={leftDrawerOpened}
+                style={isDashboard ? { backgroundColor: '#f9fafb' } : {}}
+            >
                 <Outlet />
             </Main>
         </Box>
