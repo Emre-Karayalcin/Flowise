@@ -35,7 +35,7 @@ import executionsApi from '@/api/executions'
 import { useSelector } from 'react-redux'
 
 // icons
-import execution_empty from '@/assets/images/executions_empty.svg'
+import execution_empty from '@/assets/images/executions-img.png'
 import { IconTrash } from '@tabler/icons-react'
 
 // const

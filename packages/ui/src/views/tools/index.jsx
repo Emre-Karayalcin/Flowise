@@ -24,7 +24,7 @@ import { gridSpacing } from '@/store/constant'
 
 // icons
 import { IconPlus, IconFileUpload, IconLayoutGrid, IconList } from '@tabler/icons-react'
-import ToolEmptySVG from '@/assets/images/tools_empty.svg'
+import ToolEmptySVG from '@/assets/images/tools-img.png'
 
 // ==============================|| TOOLS ||============================== //
 

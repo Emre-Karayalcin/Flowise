@@ -32,7 +32,7 @@ import { IconLayoutGrid, IconList, IconX } from '@tabler/icons-react'
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
-import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
+import WorkflowEmptySVG from '@/assets/images/chatflows-img.png'
 import ToolDialog from '@/views/tools/ToolDialog'
 import { MarketplaceTable } from '@/ui-component/table/MarketplaceTable'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'

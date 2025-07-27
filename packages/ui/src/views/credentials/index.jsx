@@ -42,7 +42,7 @@ import useNotifier from '@/utils/useNotifier'
 
 // Icons
 import { IconTrash, IconEdit, IconX, IconPlus, IconShare } from '@tabler/icons-react'
-import CredentialEmptySVG from '@/assets/images/credential_empty.svg'
+import CredentialEmptySVG from '@/assets/images/credentials-img.png'
 import keySVG from '@/assets/images/key.svg'
 
 // const

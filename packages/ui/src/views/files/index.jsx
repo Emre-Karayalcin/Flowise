@@ -5,7 +5,7 @@ import { Box, Button, Stack } from '@mui/material'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
-import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
+import WorkflowEmptySVG from '@/assets/images/chatflows-img.png'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
 import { FilesTable } from '@/ui-component/table/FilesTable'

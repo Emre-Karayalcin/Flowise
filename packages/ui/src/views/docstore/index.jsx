@@ -21,7 +21,7 @@ import documentsApi from '@/api/documentstore'
 
 // icons
 import { IconPlus, IconLayoutGrid, IconList } from '@tabler/icons-react'
-import doc_store_empty from '@/assets/images/doc_store_empty.svg'
+import doc_store_empty from '@/assets/images/documents-img.png'
 
 // const
 import { baseURL, gridSpacing } from '@/store/constant'

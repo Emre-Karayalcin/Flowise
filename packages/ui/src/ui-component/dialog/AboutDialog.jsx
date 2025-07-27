@@ -54,7 +54,6 @@ const AboutDialog = ({ show, onCancel }) => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Current Version</TableCell>
-                                    <TableCell>Latest Version</TableCell>
                                     <TableCell>Published At</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -62,11 +61,6 @@ const AboutDialog = ({ show, onCancel }) => {
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     <TableCell component='th' scope='row'>
                                         {data.currentVersion}
-                                    </TableCell>
-                                    <TableCell component='th' scope='row'>
-                                        <a target='_blank' rel='noreferrer' href={data.html_url}>
-                                            {data.name}
-                                        </a>
                                     </TableCell>
                                     <TableCell>{moment(data.published_at).fromNow()}</TableCell>
                                 </TableRow>
