@@ -1,5 +1,5 @@
-import logo from '@/assets/images/nuggets-light-logo.png'
-import logoDark from '@/assets/images/nuggets-dark-logo.png'
+import logo from '@/assets/images/nuggets-dark-logo.png'
+import logoDark from '@/assets/images/nuggets-light-logo.png'
 
 import { useSelector } from 'react-redux'
 
