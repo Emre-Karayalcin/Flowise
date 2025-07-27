@@ -21,7 +21,7 @@ import useApi from '@/hooks/useApi'
 
 // icons
 import { IconPlus, IconFileUpload } from '@tabler/icons-react'
-import AssistantEmptySVG from '@/assets/images/assistant_empty.svg'
+import AssistantEmptySVG from '@/assets/images/openai-assistant-img.png'
 import { gridSpacing } from '@/store/constant'
 
 // ==============================|| OpenAIAssistantLayout ||============================== //

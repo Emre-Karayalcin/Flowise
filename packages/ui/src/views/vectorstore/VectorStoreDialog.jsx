@@ -574,15 +574,6 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                                             {
                                                                                 'For security reason, override config is disabled by default. You can change this by going into Chatflow Configuration -> Security tab, and enable the property you want to override.'
                                                                             }
-                                                                            &nbsp;Refer{' '}
-                                                                            <a
-                                                                                rel='noreferrer'
-                                                                                target='_blank'
-                                                                                href='https://docs.flowiseai.com/using-flowise/api#override-config'
-                                                                            >
-                                                                                here
-                                                                            </a>{' '}
-                                                                            for more details
                                                                         </span>
                                                                     </div>
                                                                 </div>

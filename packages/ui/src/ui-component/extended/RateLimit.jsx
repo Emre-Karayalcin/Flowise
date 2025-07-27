@@ -153,7 +153,7 @@ const RateLimit = ({ dialogProps }) => {
                 <TooltipWithParser
                     style={{ marginLeft: 10 }}
                     title={
-                        'Visit <a target="_blank" href="https://docs.flowiseai.com/configuration/rate-limit">Rate Limit Setup Guide</a> to set up Rate Limit correctly in your hosting environment.'
+                        'Enable or disable rate limiting for this chatflow. If enabled, you can set the maximum number of messages allowed within a specified duration.'
                     }
                 />
             </Typography>

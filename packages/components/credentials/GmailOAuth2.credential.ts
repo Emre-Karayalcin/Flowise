@@ -18,7 +18,7 @@ class GmailOAuth2 implements INodeCredential {
         this.name = 'gmailOAuth2'
         this.version = 1.0
         this.description =
-            'You can find the setup instructions <a target="_blank" href="https://docs.flowiseai.com/integrations/langchain/tools/gmail">here</a>'
+            'Gmail OAuth2 credentials for accessing Gmail API'
         this.inputs = [
             {
                 label: 'Authorization URL',

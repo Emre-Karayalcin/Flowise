@@ -10,7 +10,7 @@ import { IconCheckbox, IconMessage, IconX, IconExclamationCircle, IconChecklist 
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
-import validate_empty from '@/assets/images/validate_empty.svg'
+import validate_empty from '@/assets/images/validate-empty-img.png'
 
 // api
 import validationApi from '@/api/validation'

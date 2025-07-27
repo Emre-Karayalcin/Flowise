@@ -17,7 +17,7 @@ class GoogleSheetsOAuth2 implements INodeCredential {
         this.name = 'googleSheetsOAuth2'
         this.version = 1.0
         this.description =
-            'You can find the setup instructions <a target="_blank" href="https://docs.flowiseai.com/integrations/langchain/tools/google-sheets">here</a>'
+            'Google Sheets OAuth2 credentials for accessing Google Sheets API'
         this.inputs = [
             {
                 label: 'Authorization URL',

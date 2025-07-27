@@ -788,15 +788,6 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                     {
                                                         'For security reason, override config is disabled by default. You can change this by going into Chatflow Configuration -> Security tab, and enable the property you want to override.'
                                                     }
-                                                    &nbsp;Refer{' '}
-                                                    <a
-                                                        rel='noreferrer'
-                                                        target='_blank'
-                                                        href='https://docs.flowiseai.com/using-flowise/prediction#configuration-override'
-                                                    >
-                                                        here
-                                                    </a>{' '}
-                                                    for more details
                                                 </span>
                                             </div>
                                         </div>
@@ -928,15 +919,6 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                             </div>
                                         </div>
                                     </>
-                                )}
-                                {getIsChatflowStreamingApi.data?.isStreaming && (
-                                    <p>
-                                        Read&nbsp;
-                                        <a rel='noreferrer' target='_blank' href='https://docs.flowiseai.com/using-flowise/streaming'>
-                                            here
-                                        </a>
-                                        &nbsp;on how to stream response back to application
-                                    </p>
                                 )}
                             </>
                         )}
