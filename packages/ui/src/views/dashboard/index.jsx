@@ -1,22 +1,26 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Box, Stack, Typography, Button, Card, TextField } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { Box, Stack, Typography, Button, Card, TextField, CircularProgress } from '@mui/material'
 import { IconBulb, IconSettings } from '@tabler/icons-react'
 
 const Dashboard = () => {
+    const navigate = useNavigate()
     const isDarkMode = useSelector(state => state.customization.isDarkMode)
     const [active, setActive] = useState('browse')
     const [input, setInput] = useState('')
+    const [loading, setLoading] = useState(false)
 
-    const handleSend = () => {
-        if (input.trim()) {
-            // ...send logic...
-            setInput('')
-        }
+    const handleSend = async () => {
+        setLoading(true)
+        await new Promise(resolve => setTimeout(resolve, 2000)) // fake delay 2s
+        // ...send logic...
+        setInput('')
+        setLoading(false)
     }
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && !e.shiftKey && input.trim() && !loading) {
             e.preventDefault()
             handleSend()
         }
@@ -105,7 +109,9 @@ const Dashboard = () => {
                         or
                     </Typography>
                     <Button
-                        onClick={() => setActive('scratch')}
+                        onClick={() => {
+                            navigate('/canvas')
+                        }}
                         disableElevation
                         sx={{
                             fontWeight: 700,
@@ -125,20 +131,15 @@ const Dashboard = () => {
                             minWidth: 0,
                             transition: 'all 0.2s',
                             '&:hover': {
-                                bgcolor: active === 'scratch'
-                                    ? (isDarkMode ? '#23272a' : '#f5f5f5')
-                                    : (isDarkMode ? '#23272a' : '#f5f5f5'),
-                                color: active === 'scratch'
-                                    ? (isDarkMode ? '#fff' : '#444')
-                                    : (isDarkMode ? '#888' : '#888')
+                                bgcolor: isDarkMode ? '#292211' : '#fffde7',
+                                borderColor: isDarkMode ? '#ffe066' : '#ffe066',
+                                color: '#ffe066',
+                                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)'
                             }
                         }}
                     >
                         <span
                             style={{
-                                color: active === 'scratch'
-                                    ? (isDarkMode ? '#fff' : '#444')
-                                    : (isDarkMode ? '#888' : '#bdbdbd'),
                                 fontWeight: 700,
                                 fontSize: 15
                             }}
@@ -230,6 +231,8 @@ const Dashboard = () => {
                         <Button
                             variant="contained"
                             disableElevation
+                            disabled={!input.trim() || loading}
+                            onClick={handleSend}
                             sx={{
                                 minWidth: 36,
                                 minHeight: 36,
@@ -243,10 +246,14 @@ const Dashboard = () => {
                                 }
                             }}
                         >
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="12" fill="none"/>
-                                <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#fff"/>
-                            </svg>
+                            {loading ? (
+                                <CircularProgress size={20} sx={{ color: '#fff' }} />
+                            ) : (
+                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="12" fill="none"/>
+                                    <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#fff"/>
+                                </svg>
+                            )}
                         </Button>
                     </Stack>
                 </Card>
