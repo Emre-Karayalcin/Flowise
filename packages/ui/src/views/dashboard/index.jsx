@@ -1,31 +1,167 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Box, Stack, Typography, Button, Card, TextField, CircularProgress } from '@mui/material'
-import { IconBulb, IconSettings } from '@tabler/icons-react'
-import { MENU_OPEN } from '@/store/actions'
+import {
+    Box,
+    Stack,
+    Typography,
+    Button,
+    Card,
+    TextField,
+    CircularProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    List,
+    ListItemButton,
+    ListItemText,
+    Chip
+} from '@mui/material'
+import { IconBulb, IconSparkles, IconPlus, IconX } from '@tabler/icons-react'
+import assistantsApi from '@/api/assistants'
+import { cloneDeep } from 'lodash'
+import { useTheme } from '@mui/material/styles'
+import { Dropdown } from '@/ui-component/dropdown/Dropdown'
+import { initNode, showHideInputParams } from '@/utils/genericHelper'
+import DocStoreInputHandler from '@/views/docstore/DocStoreInputHandler'
+import { StyledPermissionButton } from '@/ui-component/button/RBACButtons'
+import {
+    REMOVE_DIRTY,
+    SET_DIRTY,
+    SET_CHATFLOW,
+    enqueueSnackbar as enqueueSnackbarAction,
+    closeSnackbar as closeSnackbarAction
+} from '@/store/actions'
+import chatflowsApi from '@/api/chatflows'
+import useNotifier from '@/utils/useNotifier'
 
 const Dashboard = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const isDarkMode = useSelector(state => state.customization.isDarkMode)
+    const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     const [active, setActive] = useState('browse')
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
+    const [modelDialogOpen, setModelDialogOpen] = useState(false)
+    const [selectedModel, setSelectedModel] = useState(null)
+    const [modelsData, setModelsData] = useState([])
 
+    const theme = useTheme()
+    const [chatModelsComponents, setChatModelsComponents] = useState([])
+    const [chatModelsOptions, setChatModelsOptions] = useState([])
+
+    // ==============================|| Snackbar ||============================== //
+
+    useNotifier()
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+
+    // Fetch models from API
+    useEffect(() => {
+        const fetchModels = async () => {
+            try {
+                const res = await assistantsApi.getChatModels()
+                setModelsData(res.data || [])
+                setChatModelsComponents(res.data || [])
+                const options = (res.data || []).map((chatModel) => ({
+                    label: chatModel.label,
+                    name: chatModel.name,
+                    imageSrc: `/api/v1/node-icon/${chatModel.name}`
+                }))
+                setChatModelsOptions(options)
+            } catch (err) {
+                setModelsData([])
+                setChatModelsComponents([])
+                setChatModelsOptions([])
+            }
+        }
+        fetchModels()
+    }, [])
+
+    // Open model select dialog
+    const handleOpenModelDialog = () => {
+        setModelDialogOpen(true)
+    }
+
+    // Close model select dialog
+    const handleCloseModelDialog = () => {
+        setModelDialogOpen(false)
+    }
+
+    // Select model from dialog
+    const handleSelectModel = (model) => {
+        setSelectedModel(model)
+        setModelDialogOpen(false)
+    }
+
+    // Send logic: only allow if model is selected and input is not empty
     const handleSend = async () => {
-        setLoading(true)
-        await new Promise(resolve => setTimeout(resolve, 2000)) // fake delay 2s
-        // ...send logic...
-        setInput('')
-        setLoading(false)
+        if (!input.trim()) return
+
+        try {
+            setLoading(true)
+            const response = await chatflowsApi.generateAgentflow({
+                question: input.trim(),
+                selectedChatModel: selectedModel
+            })
+
+            if (response.data && response.data.nodes && response.data.edges) {
+                // Redirect to canvas and pass nodes, edges via state
+                navigate('/v2/agentcanvas', {
+                    state: {
+                        nodes: response.data.nodes,
+                        edges: response.data.edges
+                    }
+                })
+            } else {
+                enqueueSnackbar({
+                    message: response.error || 'Failed to generate agentflow',
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        persist: false,
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        } catch (error) {
+            enqueueSnackbar({
+                message: error.response?.data?.message || 'Failed to generate agentflow',
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: false,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+        } finally {
+            setLoading(false)
+        }
     }
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey && input.trim() && !loading) {
+        if (e.key === 'Enter' && !e.shiftKey && input.trim() && !loading && selectedModel) {
             e.preventDefault()
             handleSend()
         }
+    }
+
+    const handleChatModelDataChange = ({ inputParam, newValue }) => {
+        setSelectedModel((prevData) => {
+            const updatedData = { ...prevData }
+            updatedData.inputs[inputParam.name] = newValue
+            updatedData.inputParams = showHideInputParams(updatedData)
+            return updatedData
+        })
     }
 
     return (
@@ -40,27 +176,29 @@ const Dashboard = () => {
                 bgcolor: isDarkMode ? '#18181b' : '#f9fafb'
             }}
         >
-            <Stack spacing={3} alignItems="center" width="100%">
+            <Stack spacing={3} alignItems='center' width='100%'>
                 <Typography
-                    variant="h2"
+                    variant='h2'
                     sx={{
                         fontWeight: 800,
                         fontFamily: 'Inter, Poppins, Roboto, sans-serif',
                         textAlign: 'center',
                         fontSize: { xs: 24, md: 32 },
                         color: isDarkMode ? '#fff' : '#222',
-                        mb: 0.5,
+                        mb: 0.5
                     }}
                 >
                     What's today's Nugget-worthy idea?
                 </Typography>
-                <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
+                <Stack direction='row' spacing={1.5} alignItems='center' justifyContent='center'>
                     <Button
                         onClick={() => {
                             dispatch({ type: MENU_OPEN, id: 'marketplaces' })
                             navigate('/marketplaces')
                         }}
-                        startIcon={<IconBulb size={16} style={{ color: active === 'browse' ? '#ffe066' : (isDarkMode ? '#444' : '#bdbdbd') }} />}
+                        startIcon={
+                            <IconBulb size={16} style={{ color: active === 'browse' ? '#ffe066' : isDarkMode ? '#444' : '#bdbdbd' }} />
+                        }
                         disableElevation
                         sx={{
                             fontWeight: 700,
@@ -69,27 +207,17 @@ const Dashboard = () => {
                             py: 0.5,
                             borderRadius: '10px',
                             border: '2px solid',
-                            borderColor: active === 'browse' ? '#ffe066' : (isDarkMode ? '#333' : '#e0e0e0'),
-                            bgcolor: active === 'browse'
-                                ? (isDarkMode ? '#292211' : '#fffde7')
-                                : (isDarkMode ? '#23272a' : '#fff'),
-                            color: active === 'browse'
-                                ? (isDarkMode ? '#ffe066' : '#ffe066')
-                                : (isDarkMode ? '#888' : '#bdbdbd'),
+                            borderColor: active === 'browse' ? '#ffe066' : isDarkMode ? '#333' : '#e0e0e0',
+                            bgcolor: active === 'browse' ? (isDarkMode ? '#292211' : '#fffde7') : isDarkMode ? '#23272a' : '#fff',
+                            color: active === 'browse' ? (isDarkMode ? '#ffe066' : '#ffe066') : isDarkMode ? '#888' : '#bdbdbd',
                             boxShadow: 'none',
                             minWidth: 0,
                             transition: 'all 0.2s',
                             '&:hover': {
-                                bgcolor: active === 'browse'
-                                    ? (isDarkMode ? '#292211' : '#fffde7')
-                                    : (isDarkMode ? '#23272a' : '#f5f5f5'),
-                                borderColor: active === 'browse'
-                                    ? '#ffe066'
-                                    : (isDarkMode ? '#333' : '#e0e0e0'),
-                                color: active === 'browse'
-                                    ? '#ffe066'
-                                    : (isDarkMode ? '#888' : '#bdbdbd'),
-                                opacity: 0.6,
+                                bgcolor: active === 'browse' ? (isDarkMode ? '#292211' : '#fffde7') : isDarkMode ? '#23272a' : '#f5f5f5',
+                                borderColor: active === 'browse' ? '#ffe066' : isDarkMode ? '#333' : '#e0e0e0',
+                                color: active === 'browse' ? '#ffe066' : isDarkMode ? '#888' : '#bdbdbd',
+                                opacity: 0.6
                             }
                         }}
                     >
@@ -124,12 +252,8 @@ const Dashboard = () => {
                             borderRadius: '10px',
                             border: '2px solid',
                             borderColor: '#e0e0e0',
-                            bgcolor: active === 'scratch'
-                                ? (isDarkMode ? '#23272a' : '#f5f5f5')
-                                : (isDarkMode ? '#23272a' : '#fff'),
-                            color: active === 'scratch'
-                                ? (isDarkMode ? '#fff' : '#444')
-                                : (isDarkMode ? '#888' : '#bdbdbd'),
+                            bgcolor: active === 'scratch' ? (isDarkMode ? '#23272a' : '#f5f5f5') : isDarkMode ? '#23272a' : '#fff',
+                            color: active === 'scratch' ? (isDarkMode ? '#fff' : '#444') : isDarkMode ? '#888' : '#bdbdbd',
                             boxShadow: 'none',
                             minWidth: 0,
                             transition: 'all 0.2s',
@@ -168,7 +292,8 @@ const Dashboard = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'stretch',
-                        justifyContent: 'flex-start'
+                        justifyContent: 'flex-start',
+                        position: 'relative' // Add relative for absolute badge
                     }}
                 >
                     <TextField
@@ -177,8 +302,8 @@ const Dashboard = () => {
                         minRows={1}
                         maxRows={6}
                         value={input}
-                        onChange={e => setInput(e.target.value)}
-                        placeholder="Build a workflow to organize my daily tasks"
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder='Build a workflow to organize my daily tasks'
                         onKeyDown={handleKeyDown}
                         InputProps={{
                             disableUnderline: true,
@@ -202,12 +327,51 @@ const Dashboard = () => {
                                 }
                             }
                         }}
-                        variant="standard"
+                        variant='standard'
                         sx={{
                             mb: 2
                         }}
                     />
-                    <Stack direction="row" alignItems="center" width="100%" sx={{ mt: 'auto' }}>
+
+                    <Stack direction='row' alignItems='center' width='100%' sx={{ mt: 'auto' }}>
+                        <Typography
+                            sx={{
+                                color: isDarkMode ? '#bdbdbd' : '#8b939b',
+                                fontSize: 15,
+                                fontWeight: 500,
+                                display: 'flex',
+                                alignItems: 'center',
+                                cursor: 'pointer',
+                                transition: 'color 0.2s',
+                                '&:hover': {
+                                    color: '#ffe066',
+                                    '& svg': {
+                                        color: '#ffe066'
+                                    }
+                                }
+                            }}
+                            onClick={handleOpenModelDialog}
+                        >
+                            <span style={{ marginRight: 8, fontSize: 15, display: 'flex', alignItems: 'center' }}>
+                                {selectedModel && selectedModel.name ? (
+                                    <img
+                                        src={`/api/v1/node-icon/${selectedModel.name}`}
+                                        alt={selectedModel.label}
+                                        style={{
+                                            width: 20,
+                                            height: 20,
+                                            verticalAlign: 'middle',
+                                            borderRadius: 4,
+                                            background: isDarkMode ? '#292211' : '#fffde7',
+                                            transition: 'filter 0.2s'
+                                        }}
+                                    />
+                                ) : (
+                                    <IconSparkles style={{ color: 'inherit', transition: 'color 0.2s' }} />
+                                )}
+                            </span>
+                            {selectedModel ? `Change Model` : 'Select Model'}
+                        </Typography>
                         <Box flex={1} />
                         <Typography
                             sx={{
@@ -220,9 +384,9 @@ const Dashboard = () => {
                             Press <b>Shift</b> + <b>Enter</b> for new line
                         </Typography>
                         <Button
-                            variant="contained"
+                            variant='contained'
                             disableElevation
-                            disabled={!input.trim() || loading}
+                            disabled={!input.trim() || loading || !selectedModel}
                             onClick={handleSend}
                             sx={{
                                 minWidth: 36,
@@ -240,14 +404,107 @@ const Dashboard = () => {
                             {loading ? (
                                 <CircularProgress size={20} sx={{ color: '#fff' }} />
                             ) : (
-                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="12" fill="none"/>
-                                    <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#fff"/>
+                                <svg width='20' height='20' fill='none' viewBox='0 0 24 24'>
+                                    <circle cx='12' cy='12' r='12' fill='none' />
+                                    <path d='M2 21L23 12L2 3V10L17 12L2 14V21Z' fill='#fff' />
                                 </svg>
                             )}
                         </Button>
                     </Stack>
                 </Card>
+
+                {/* Model Select Dialog */}
+                <Dialog
+                    open={modelDialogOpen}
+                    onClose={handleCloseModelDialog}
+                    maxWidth='sm'
+                    fullWidth
+                    PaperProps={{
+                        sx: {
+                            borderRadius: 4,
+                            p: 2
+                        }
+                    }}
+                >
+                    <DialogTitle sx={{ fontWeight: 700, fontSize: 20, mb: 1 }}>Select model to generate agentflow</DialogTitle>
+                    <DialogContent>
+                        <Box sx={{ mt: 2 }}>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                                <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
+                                    Select model<span style={{ color: 'red' }}>&nbsp;*</span>
+                                </Typography>
+                            </div>
+                            <Dropdown
+                                key={JSON.stringify(selectedModel)}
+                                name={'chatModel'}
+                                options={chatModelsOptions ?? []}
+                                onSelect={(newValue) => {
+                                    if (!newValue) {
+                                        setSelectedModel(null)
+                                    } else {
+                                        const foundChatComponent = chatModelsComponents.find((chatModel) => chatModel.name === newValue)
+                                        if (foundChatComponent) {
+                                            const chatModelId = `${foundChatComponent.name}_0`
+                                            const clonedComponent = cloneDeep(foundChatComponent)
+                                            const initChatModelData = initNode(clonedComponent, chatModelId)
+                                            setSelectedModel(initChatModelData)
+                                        }
+                                    }
+                                }}
+                                value={selectedModel ? selectedModel?.name : 'choose an option'}
+                            />
+                        </Box>
+                        {selectedModel && Object.keys(selectedModel).length > 0 && (
+                            <Box
+                                sx={{
+                                    p: 0,
+                                    mt: 2,
+                                    mb: 1,
+                                    border: 1,
+                                    borderColor: theme.palette.grey[900] + 25,
+                                    borderRadius: 2
+                                }}
+                            >
+                                {showHideInputParams(selectedModel)
+                                    .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
+                                    .map((inputParam, index) => (
+                                        <DocStoreInputHandler
+                                            key={index}
+                                            inputParam={inputParam}
+                                            data={selectedModel}
+                                            onNodeDataChange={handleChatModelDataChange}
+                                        />
+                                    ))}
+                            </Box>
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ justifyContent: 'flex-end', px: 3, pb: 2 }}>
+                        <Button onClick={handleCloseModelDialog}>Cancel</Button>
+                        <StyledPermissionButton
+                            permissionId={'agentflows:create'}
+                            variant='contained'
+                            onClick={() => {
+                                setModelDialogOpen(false)
+                            }}
+                            startIcon={<IconPlus />}
+                            sx={{ borderRadius: 2, height: 40, fontWeight: 700, fontSize: 16 }}
+                            disabled={
+                                !selectedModel ||
+                                !Object.keys(selectedModel).length ||
+                                showHideInputParams(selectedModel)
+                                    .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
+                                    .some(
+                                        (inputParam) =>
+                                            inputParam.required &&
+                                            (selectedModel.inputs?.[inputParam.name] === undefined ||
+                                                selectedModel.inputs?.[inputParam.name] === '')
+                                    )
+                            }
+                        >
+                            Add Model
+                        </StyledPermissionButton>
+                    </DialogActions>
+                </Dialog>
             </Stack>
         </Box>
     )

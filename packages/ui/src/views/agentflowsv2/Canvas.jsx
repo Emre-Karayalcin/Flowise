@@ -69,7 +69,8 @@ const AgentflowCanvas = () => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
-    const { state } = useLocation()
+    const location = useLocation()
+    const state = location.state || {}
     const templateFlowData = state ? state.templateFlowData : ''
 
     const URLpath = document.location.pathname.toString().split('/')
@@ -521,6 +522,18 @@ const AgentflowCanvas = () => {
     }
 
     // ==============================|| useEffect ||============================== //
+
+    // Set initial nodes and edges from the state
+    useEffect(() => {
+        if (state.nodes && state.edges) {
+            setNodes(state.nodes)
+            setEdges(state.edges)
+            if (reactFlowInstance) {
+                reactFlowInstance.setNodes(state.nodes)
+                reactFlowInstance.setEdges(state.edges)
+            }
+        }
+    }, [state.nodes, state.edges, reactFlowInstance])
 
     // Get specific chatflow successful
     useEffect(() => {
