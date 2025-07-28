@@ -151,8 +151,9 @@ const Dashboard = () => {
                     elevation={0}
                     sx={{
                         mt: 1.5,
-                        px: { xs: 2, md: 4 },
-                        py: { xs: 2, md: 3 },
+                        px: { xs: 2, md: 3 },
+                        pt: { xs: 2, md: 3 },
+                        pb: { xs: 1, md: 1 },
                         borderRadius: '20px',
                         minWidth: { xs: 320, md: 600 },
                         maxWidth: 720,
