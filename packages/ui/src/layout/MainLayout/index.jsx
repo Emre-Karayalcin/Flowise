@@ -63,6 +63,7 @@ const MainLayout = () => {
 
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened)
+    const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     const dispatch = useDispatch()
     const handleLeftDrawerToggle = () => {
         dispatch({ type: SET_MENU, opened: !leftDrawerOpened })
@@ -101,7 +102,11 @@ const MainLayout = () => {
             <Main
                 theme={theme}
                 open={leftDrawerOpened}
-                style={isDashboard ? { backgroundColor: '#f9fafb' } : {}}
+                style={
+                    isDashboard
+                        ? { backgroundColor: isDarkMode ? '#18181b' : '#f9fafb' }
+                        : {}
+                }
             >
                 <Outlet />
             </Main>

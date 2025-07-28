@@ -189,19 +189,6 @@ const Agentflows = () => {
                                 }}
                                 variant='contained'
                                 value='v2'
-                                title='V2'
-                            >
-                                <Chip sx={{ mr: 1 }} label='NEW' size='small' color='primary' />
-                                V2
-                            </ToggleButton>
-                            <ToggleButton
-                                sx={{
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
-                                }}
-                                variant='contained'
-                                value='v1'
                                 title='V1'
                             >
                                 V1

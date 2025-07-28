@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Box, Stack, Typography, Button, Card, TextField } from '@mui/material'
 import { IconBulb, IconSettings } from '@tabler/icons-react'
 
 const Dashboard = () => {
+    const isDarkMode = useSelector(state => state.customization.isDarkMode)
     const [active, setActive] = useState('browse')
     const [input, setInput] = useState('')
 
@@ -22,14 +24,14 @@ const Dashboard = () => {
 
     return (
         <Box
-            className="bg-gray-50"
             sx={{
                 minHeight: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                py: { xs: 4, md: 6 }
+                py: { xs: 4, md: 6 },
+                bgcolor: isDarkMode ? '#18181b' : '#f9fafb'
             }}
         >
             <Stack spacing={3} alignItems="center" width="100%">
@@ -40,8 +42,8 @@ const Dashboard = () => {
                         fontFamily: 'Inter, Poppins, Roboto, sans-serif',
                         textAlign: 'center',
                         fontSize: { xs: 24, md: 32 },
-                        color: '#222',
-                        mb: 0.5
+                        color: isDarkMode ? '#fff' : '#222',
+                        mb: 0.5,
                     }}
                 >
                     What's today's Nugget-worthy idea?
@@ -49,7 +51,7 @@ const Dashboard = () => {
                 <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
                     <Button
                         onClick={() => setActive('browse')}
-                        startIcon={<IconBulb size={16} style={{ color: active === 'browse' ? '#ffe066' : '#bdbdbd' }} />}
+                        startIcon={<IconBulb size={16} style={{ color: active === 'browse' ? '#ffe066' : (isDarkMode ? '#444' : '#bdbdbd') }} />}
                         disableElevation
                         sx={{
                             fontWeight: 700,
@@ -58,30 +60,44 @@ const Dashboard = () => {
                             py: 0.5,
                             borderRadius: '10px',
                             border: '2px solid',
-                            borderColor: active === 'browse' ? '#ffe066' : '#e0e0e0',
-                            bgcolor: active === 'browse' ? '#fffde7' : '#fff',
-                            color: active === 'browse' ? '#ffe066' : '#bdbdbd',
+                            borderColor: active === 'browse' ? '#ffe066' : (isDarkMode ? '#333' : '#e0e0e0'),
+                            bgcolor: active === 'browse'
+                                ? (isDarkMode ? '#292211' : '#fffde7')
+                                : (isDarkMode ? '#23272a' : '#fff'),
+                            color: active === 'browse'
+                                ? (isDarkMode ? '#ffe066' : '#ffe066')
+                                : (isDarkMode ? '#888' : '#bdbdbd'),
                             boxShadow: 'none',
                             minWidth: 0,
                             transition: 'all 0.2s',
                             '&:hover': {
-                                bgcolor: active === 'browse' ? '#fffde7' : '#f5f5f5',
-                                borderColor: active === 'browse' ? '#ffe066' : '#e0e0e0',
-                                color: active === 'browse' ? '#ffe066' : '#bdbdbd'
+                                bgcolor: active === 'browse'
+                                    ? (isDarkMode ? '#292211' : '#fffde7')
+                                    : (isDarkMode ? '#23272a' : '#f5f5f5'),
+                                borderColor: active === 'browse'
+                                    ? '#ffe066'
+                                    : (isDarkMode ? '#333' : '#e0e0e0'),
+                                color: active === 'browse'
+                                    ? '#ffe066'
+                                    : (isDarkMode ? '#888' : '#bdbdbd')
                             }
                         }}
                     >
-                        <span style={{
-                            color: active === 'browse' ? '#ffe066' : '#bdbdbd',
-                            fontWeight: 700,
-                            fontSize: 15
-                        }}>
+                        <span
+                            style={{
+                                color: active === 'browse'
+                                    ? '#ffe066'
+                                    : (isDarkMode ? '#888' : '#bdbdbd'),
+                                fontWeight: 700,
+                                fontSize: 15
+                            }}
+                        >
                             Browse Buckets
                         </span>
                     </Button>
                     <Typography
                         sx={{
-                            color: '#888',
+                            color: isDarkMode ? '#888' : '#888',
                             fontWeight: 600,
                             fontSize: 15
                         }}
@@ -98,23 +114,35 @@ const Dashboard = () => {
                             py: 0.5,
                             borderRadius: '10px',
                             border: '2px solid',
-                            borderColor: active === 'scratch' ? '#e0e0e0' : '#e0e0e0',
-                            bgcolor: active === 'scratch' ? '#f5f5f5' : '#fff',
-                            color: active === 'scratch' ? '#444' : '#bdbdbd',
+                            borderColor: '#e0e0e0',
+                            bgcolor: active === 'scratch'
+                                ? (isDarkMode ? '#23272a' : '#f5f5f5')
+                                : (isDarkMode ? '#23272a' : '#fff'),
+                            color: active === 'scratch'
+                                ? (isDarkMode ? '#fff' : '#444')
+                                : (isDarkMode ? '#888' : '#bdbdbd'),
                             boxShadow: 'none',
                             minWidth: 0,
                             transition: 'all 0.2s',
                             '&:hover': {
-                                bgcolor: active === 'scratch' ? '#f5f5f5' : '#f5f5f5',
-                                color: active === 'scratch' ? '#444' : '#888'
+                                bgcolor: active === 'scratch'
+                                    ? (isDarkMode ? '#23272a' : '#f5f5f5')
+                                    : (isDarkMode ? '#23272a' : '#f5f5f5'),
+                                color: active === 'scratch'
+                                    ? (isDarkMode ? '#fff' : '#444')
+                                    : (isDarkMode ? '#888' : '#888')
                             }
                         }}
                     >
-                        <span style={{
-                            color: active === 'scratch' ? '#444' : '#bdbdbd',
-                            fontWeight: 700,
-                            fontSize: 15
-                        }}>
+                        <span
+                            style={{
+                                color: active === 'scratch'
+                                    ? (isDarkMode ? '#fff' : '#444')
+                                    : (isDarkMode ? '#888' : '#bdbdbd'),
+                                fontWeight: 700,
+                                fontSize: 15
+                            }}
+                        >
                             Start from scratch
                         </span>
                     </Button>
@@ -129,7 +157,7 @@ const Dashboard = () => {
                         minWidth: { xs: 320, md: 600 },
                         maxWidth: 720,
                         width: '100%',
-                        bgcolor: '#fff',
+                        bgcolor: isDarkMode ? '#23272a' : '#fff',
                         boxShadow: '0 4px 24px 0 rgba(0,0,0,0.08)',
                         border: 'none',
                         display: 'flex',
@@ -152,7 +180,7 @@ const Dashboard = () => {
                             sx: {
                                 fontSize: 15,
                                 fontWeight: 500,
-                                color: '#d1d5db',
+                                color: isDarkMode ? '#fff' : '#222',
                                 px: 0,
                                 py: 0,
                                 mb: 0,
@@ -163,7 +191,9 @@ const Dashboard = () => {
                                     textAlign: 'left',
                                     resize: 'none',
                                     maxHeight: 120,
-                                    lineHeight: 1.4
+                                    lineHeight: 1.4,
+                                    backgroundColor: 'transparent',
+                                    color: isDarkMode ? '#fff' : '#222'
                                 }
                             }
                         }}
@@ -175,7 +205,7 @@ const Dashboard = () => {
                     <Stack direction="row" alignItems="center" width="100%" sx={{ mt: 'auto' }}>
                         <Typography
                             sx={{
-                                color: '#8b939b',
+                                color: isDarkMode ? '#bdbdbd' : '#8b939b',
                                 fontSize: 15,
                                 fontWeight: 500,
                                 display: 'flex',
@@ -188,7 +218,7 @@ const Dashboard = () => {
                         <Box flex={1} />
                         <Typography
                             sx={{
-                                color: '#bdbdbd',
+                                color: isDarkMode ? '#888' : '#bdbdbd',
                                 fontSize: 14,
                                 mr: 1.5,
                                 fontWeight: 400
