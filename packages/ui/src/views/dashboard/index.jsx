@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Box, Stack, Typography, Button, Card, TextField, CircularProgress } from '@mui/material'
 import { IconBulb, IconSettings } from '@tabler/icons-react'
+import { MENU_OPEN } from '@/store/actions'
 
 const Dashboard = () => {
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const isDarkMode = useSelector(state => state.customization.isDarkMode)
     const [active, setActive] = useState('browse')
@@ -54,7 +56,10 @@ const Dashboard = () => {
                 </Typography>
                 <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
                     <Button
-                        onClick={() => setActive('browse')}
+                        onClick={() => {
+                            dispatch({ type: MENU_OPEN, id: 'marketplaces' })
+                            navigate('/marketplaces')
+                        }}
                         startIcon={<IconBulb size={16} style={{ color: active === 'browse' ? '#ffe066' : (isDarkMode ? '#444' : '#bdbdbd') }} />}
                         disableElevation
                         sx={{
@@ -83,15 +88,13 @@ const Dashboard = () => {
                                     : (isDarkMode ? '#333' : '#e0e0e0'),
                                 color: active === 'browse'
                                     ? '#ffe066'
-                                    : (isDarkMode ? '#888' : '#bdbdbd')
+                                    : (isDarkMode ? '#888' : '#bdbdbd'),
+                                opacity: 0.6,
                             }
                         }}
                     >
                         <span
                             style={{
-                                color: active === 'browse'
-                                    ? '#ffe066'
-                                    : (isDarkMode ? '#888' : '#bdbdbd'),
                                 fontWeight: 700,
                                 fontSize: 15
                             }}
@@ -205,18 +208,6 @@ const Dashboard = () => {
                         }}
                     />
                     <Stack direction="row" alignItems="center" width="100%" sx={{ mt: 'auto' }}>
-                        <Typography
-                            sx={{
-                                color: isDarkMode ? '#bdbdbd' : '#8b939b',
-                                fontSize: 15,
-                                fontWeight: 500,
-                                display: 'flex',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <span style={{ marginRight: 8, fontSize: 15 }}><IconSettings /></span>
-                            Select Apps
-                        </Typography>
                         <Box flex={1} />
                         <Typography
                             sx={{
