@@ -51,9 +51,12 @@ const NavGroup = ({ item }) => {
         return true
     }
 
-    const renderPrimaryItems = () => {
+    const renderPrimaryGroup = () => {
         const primaryGroup = item.children.find((child) => child.id === 'primary')
-        return primaryGroup.children
+        if (!primaryGroup) return null
+        const children = primaryGroup.children.filter((menu) => shouldDisplayMenu(menu))
+        if (children.length === 0) return null
+        return { ...primaryGroup, children }
     }
 
     const renderNonPrimaryGroups = () => {
@@ -70,41 +73,50 @@ const NavGroup = ({ item }) => {
 
     return (
         <>
-            <List
-                subheader={
-                    item.title && (
-                        <Typography variant='caption' sx={{ ...theme.typography.menuCaption }} display='block' gutterBottom>
-                            {item.title}
-                            {item.caption && (
-                                <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
-                                    {item.caption}
+            {renderPrimaryGroup() && (
+                <Available permission={renderPrimaryGroup().children.map((menu) => menu.permission).join(',')}>
+                    <List
+                        subheader={
+                            renderPrimaryGroup().title && (
+                                <Typography variant='caption' sx={{ ...theme.typography.menuCaption }} display='block' gutterBottom>
+                                    {renderPrimaryGroup().title}
+                                    {renderPrimaryGroup().caption && (
+                                        <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                                            {renderPrimaryGroup().caption}
+                                        </Typography>
+                                    )}
                                 </Typography>
-                            )}
-                        </Typography>
-                    )
-                }
-                sx={{ p: '16px', py: 2, display: 'flex', flexDirection: 'column', gap: 1 }}
-            >
-                {renderPrimaryItems().map((menu) => listItems(menu))}
-            </List>
+                            )
+                        }
+                        sx={{ p: '16px', pb: 1.2, pt: 0, display: 'flex', flexDirection: 'column', gap: 0.9 }}
+                    >
+                        {renderPrimaryGroup().children.map((menu) => listItems(menu))}
+                    </List>
+                </Available>
+            )}
 
             {renderNonPrimaryGroups().map((group) => {
                 const groupPermissions = group.children.map((menu) => menu.permission).join(',')
                 return (
                     <Available key={group.id} permission={groupPermissions}>
-                        <>
-                            <Divider sx={{ height: '1px', borderColor: theme.palette.grey[900] + 25, my: 0 }} />
-                            <List
-                                subheader={
-                                    <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                        <Divider sx={{ height: '1px', borderColor: theme.palette.grey[900] + 25, my: 0 }} />
+                        <List
+                            subheader={
+                                group.title && (
+                                    <Typography variant='caption' sx={{ ...theme.typography.menuCaption }} display='block' gutterBottom>
                                         {group.title}
+                                        {group.caption && (
+                                            <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                                                {group.caption}
+                                            </Typography>
+                                        )}
                                     </Typography>
-                                }
-                                sx={{ p: '16px', py: 2, display: 'flex', flexDirection: 'column', gap: 1 }}
-                            >
-                                {group.children.map((menu) => listItems(menu))}
-                            </List>
-                        </>
+                                )
+                            }
+                            sx={{ p: '16px', py: 1.2, display: 'flex', flexDirection: 'column', gap: 0.9 }}
+                        >
+                            {group.children.map((menu) => listItems(menu))}
+                        </List>
                     </Available>
                 )
             })}

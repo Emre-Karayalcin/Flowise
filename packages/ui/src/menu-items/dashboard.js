@@ -65,7 +65,7 @@ const dashboard = {
     children: [
         {
             id: 'primary',
-            title: '',
+            title: 'Workspace',
             type: 'group',
             children: [
                 {
@@ -78,7 +78,7 @@ const dashboard = {
                 },
                 {
                     id: 'chatflows',
-                    title: 'Chatflows',
+                    title: 'Nuggets',
                     type: 'item',
                     url: '/chatflows',
                     icon: icons.IconHierarchy,
@@ -87,13 +87,20 @@ const dashboard = {
                 },
                 {
                     id: 'agentflows',
-                    title: 'Agentflows',
+                    title: 'Agents',
                     type: 'item',
                     url: '/agentflows',
                     icon: icons.IconUsersGroup,
                     breadcrumbs: true,
                     permission: 'agentflows:view'
-                },
+                }
+            ]
+        },
+        {
+            id: 'operations',
+            title: 'Operations',
+            type: 'group',
+            children: [
                 {
                     id: 'executions',
                     title: 'Executions',
@@ -120,7 +127,14 @@ const dashboard = {
                     icon: icons.IconBuildingStore,
                     breadcrumbs: true,
                     permission: 'templates:marketplace,templates:custom'
-                },
+                }
+            ]
+        },
+        {
+            id: 'setup',
+            title: 'Setup',
+            type: 'group',
+            children: [
                 {
                     id: 'tools',
                     title: 'Tools',
@@ -129,15 +143,6 @@ const dashboard = {
                     icon: icons.IconTool,
                     breadcrumbs: true,
                     permission: 'tools:view'
-                },
-                {
-                    id: 'credentials',
-                    title: 'Credentials',
-                    type: 'item',
-                    url: '/credentials',
-                    icon: icons.IconLock,
-                    breadcrumbs: true,
-                    permission: 'credentials:view'
                 },
                 {
                     id: 'variables',
@@ -149,6 +154,22 @@ const dashboard = {
                     permission: 'variables:view'
                 },
                 {
+                    id: 'document-stores',
+                    title: 'Document Stores',
+                    type: 'item',
+                    url: '/document-stores',
+                    icon: icons.IconFiles,
+                    breadcrumbs: true,
+                    permission: 'documentStores:view'
+                }
+            ]
+        },
+        {
+            id: 'integrations',
+            title: 'Integrations',
+            type: 'group',
+            children: [
+                {
                     id: 'apikey',
                     title: 'API Keys',
                     type: 'item',
@@ -158,13 +179,13 @@ const dashboard = {
                     permission: 'apikeys:view'
                 },
                 {
-                    id: 'document-stores',
-                    title: 'Document Stores',
+                    id: 'credentials',
+                    title: 'Credentials',
                     type: 'item',
-                    url: '/document-stores',
-                    icon: icons.IconFiles,
+                    url: '/credentials',
+                    icon: icons.IconLock,
                     breadcrumbs: true,
-                    permission: 'documentStores:view'
+                    permission: 'credentials:view'
                 }
             ]
         },
