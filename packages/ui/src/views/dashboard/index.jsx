@@ -33,6 +33,7 @@ import {
     enqueueSnackbar as enqueueSnackbarAction,
     closeSnackbar as closeSnackbarAction
 } from '@/store/actions'
+import { MENU_OPEN } from '@/store/actions'
 import chatflowsApi from '@/api/chatflows'
 import useNotifier from '@/utils/useNotifier'
 
