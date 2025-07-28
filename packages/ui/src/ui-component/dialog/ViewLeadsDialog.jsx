@@ -24,7 +24,7 @@ import {
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { IconFileExport, IconSearch } from '@tabler/icons-react'
-import leadsEmptySVG from '@/assets/images/leads_empty.svg'
+import leadsEmptySVG from '@/assets/images/view-leads-img.png'
 
 // store
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
