@@ -56,6 +56,7 @@ const ViewHeader = ({
                             sx={{
                                 fontSize: '1.8rem',
                                 fontWeight: 600,
+                                fontFamily: 'Tan Tangkiwood, sans-serif',
                                 display: '-webkit-box',
                                 WebkitLineClamp: 3,
                                 WebkitBoxOrient: 'vertical',

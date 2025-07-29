@@ -182,7 +182,7 @@ const Dashboard = () => {
                     variant='h2'
                     sx={{
                         fontWeight: 800,
-                        fontFamily: 'Inter, Poppins, Roboto, sans-serif',
+                        fontFamily: 'Tan Tangkiwood, sans-serif',
                         textAlign: 'center',
                         fontSize: { xs: 24, md: 32 },
                         color: isDarkMode ? '#fff' : '#222',
