@@ -536,7 +536,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                     </Typography>
                                     <Typography variant='overline'>
                                         <Checkbox defaultChecked size='small' label='All' value='Chatflow' onChange={onChangeFlowType} />{' '}
-                                        Chatflows
+                                        Nuggets
                                         <Checkbox
                                             defaultChecked
                                             size='small'
@@ -544,7 +544,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                             value='Agentflow v2'
                                             onChange={onChangeFlowType}
                                         />{' '}
-                                        Agentflows (v2)
+                                        Agents (v2)
                                         <Checkbox
                                             defaultChecked
                                             size='small'

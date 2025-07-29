@@ -21,13 +21,13 @@ class ChatflowTool_Tools implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Chatflow Tool'
+        this.label = 'Nuggets Tool'
         this.name = 'ChatflowTool'
         this.version = 5.1
         this.type = 'ChatflowTool'
         this.icon = 'chatflowTool.svg'
         this.category = 'Tools'
-        this.description = 'Use as a tool to execute another chatflow'
+        this.description = 'Use as a tool to execute another Nuggets'
         this.baseClasses = [this.type, 'Tool']
         this.credential = {
             label: 'Connect Credential',
@@ -38,7 +38,7 @@ class ChatflowTool_Tools implements INode {
         }
         this.inputs = [
             {
-                label: 'Select Chatflow',
+                label: 'Select Nuggets',
                 name: 'selectedChatflow',
                 type: 'asyncOptions',
                 loadMethod: 'listChatflows'
@@ -66,7 +66,7 @@ class ChatflowTool_Tools implements INode {
             {
                 label: 'Override Config',
                 name: 'overrideConfig',
-                description: 'Override the config passed to the Chatflow.',
+                description: 'Override the config passed to the Nuggets.',
                 type: 'json',
                 optional: true,
                 additionalParams: true
@@ -76,7 +76,7 @@ class ChatflowTool_Tools implements INode {
                 name: 'baseURL',
                 type: 'string',
                 description:
-                    'Base URL to Flowise. By default, it is the URL of the incoming request. Useful when you need to execute the Chatflow through an alternative route.',
+                    'Base URL to Flowise. By default, it is the URL of the incoming request. Useful when you need to execute the Nuggets through an alternative route.',
                 placeholder: 'http://localhost:3000',
                 optional: true,
                 additionalParams: true
@@ -86,7 +86,7 @@ class ChatflowTool_Tools implements INode {
                 name: 'startNewSession',
                 type: 'boolean',
                 description:
-                    'Whether to continue the session with the Chatflow tool or start a new one with each interaction. Useful for Chatflows with memory if you want to avoid it.',
+                    'Whether to continue the session with the Nuggets tool or start a new one with each interaction. Useful for Nuggets with memory if you want to avoid it.',
                 default: false,
                 optional: true,
                 additionalParams: true
@@ -96,7 +96,7 @@ class ChatflowTool_Tools implements INode {
                 name: 'useQuestionFromChat',
                 type: 'boolean',
                 description:
-                    'Whether to use the question from the chat as input to the chatflow. If turned on, this will override the custom input.',
+                    'Whether to use the question from the chat as input to the Nuggets. If turned on, this will override the custom input.',
                 optional: true,
                 additionalParams: true
             },
@@ -104,7 +104,7 @@ class ChatflowTool_Tools implements INode {
                 label: 'Custom Input',
                 name: 'customInput',
                 type: 'string',
-                description: 'Custom input to be passed to the chatflow. Leave empty to let LLM decides the input.',
+                description: 'Custom input to be passed to the Nuggets. Leave empty to let LLM decides the input.',
                 optional: true,
                 additionalParams: true,
                 show: {
