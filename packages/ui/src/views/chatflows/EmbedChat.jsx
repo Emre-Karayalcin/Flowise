@@ -171,7 +171,7 @@ export const defaultThemeConfig = {
             textColor: '#303235',
             text: 'Powered by',
             company: 'Nuggets',
-            companyLink: 'https://flowiseai.com'
+            companyLink: 'https://beta.buildnuggets.ai'
         }
     }
 }

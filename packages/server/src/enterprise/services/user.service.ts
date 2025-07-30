@@ -35,6 +35,11 @@ export class UserService {
         this.telemetry = appServer.telemetry
     }
 
+    public async readFirstUser(queryRunner: QueryRunner) {
+        const users = await queryRunner.manager.find(User, { order: { createdDate: 'ASC' } })
+        return users.length > 0 ? users[0] : undefined
+    }
+
     public validateUserId(id: string | undefined) {
         if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_ID)
     }

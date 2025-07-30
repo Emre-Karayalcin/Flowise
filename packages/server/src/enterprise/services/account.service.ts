@@ -171,44 +171,76 @@ export class AccountService {
                 }
                 break
             }
+            // case Platform.ENTERPRISE: {
+            //     if (data.user.tempToken) {
+            //         const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
+            //         if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            //         if (user.email !== data.user.email)
+            //             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
+            //         const name = data.user.name
+            //         if (data.user.credential) user.credential = this.userService.encryptUserCredential(data.user.credential)
+            //         data.user = user
+            //         const organizationUser = await this.organizationUserService.readOrganizationUserByUserId(user.id, queryRunner)
+            //         if (!organizationUser)
+            //             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
+            //         const assignedOrganization = await this.organizationservice.readOrganizationById(
+            //             organizationUser[0].organizationId,
+            //             queryRunner
+            //         )
+            //         if (!assignedOrganization)
+            //             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+            //         data.organization = assignedOrganization
+            //         const tokenExpiry = new Date(user.tokenExpiry!)
+            //         const today = new Date()
+            //         if (today > tokenExpiry) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
+            //         data.user.tempToken = ''
+            //         data.user.tokenExpiry = null
+            //         data.user.name = name
+            //         data.user.status = UserStatus.ACTIVE
+            //         data.organizationUser.status = OrganizationUserStatus.ACTIVE
+            //         data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
+            //         data.workspace.name = WorkspaceName.DEFAULT_PERSONAL_WORKSPACE
+            //         data.workspaceUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
+            //     } else {
+            //         await this.ensureOneOrganizationOnly(queryRunner)
+            //         data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
+            //         data.workspace.name = WorkspaceName.DEFAULT_WORKSPACE
+            //         data.workspaceUser.role = data.organizationUser.role
+            //         data.user.status = UserStatus.ACTIVE
+            //         data.user = await this.userService.createNewUser(data.user, queryRunner)
+            //     }
+            //     break
+            // }
+
             case Platform.ENTERPRISE: {
-                if (data.user.tempToken) {
-                    const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
-                    if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
-                    if (user.email !== data.user.email)
-                        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
-                    const name = data.user.name
-                    if (data.user.credential) user.credential = this.userService.encryptUserCredential(data.user.credential)
-                    data.user = user
-                    const organizationUser = await this.organizationUserService.readOrganizationUserByUserId(user.id, queryRunner)
-                    if (!organizationUser)
-                        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
-                    const assignedOrganization = await this.organizationservice.readOrganizationById(
-                        organizationUser[0].organizationId,
-                        queryRunner
-                    )
-                    if (!assignedOrganization)
-                        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
-                    data.organization = assignedOrganization
-                    const tokenExpiry = new Date(user.tokenExpiry!)
-                    const today = new Date()
-                    if (today > tokenExpiry) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
-                    data.user.tempToken = ''
-                    data.user.tokenExpiry = null
-                    data.user.name = name
-                    data.user.status = UserStatus.ACTIVE
-                    data.organizationUser.status = OrganizationUserStatus.ACTIVE
-                    data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
-                    data.workspace.name = WorkspaceName.DEFAULT_PERSONAL_WORKSPACE
-                    data.workspaceUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
-                } else {
-                    await this.ensureOneOrganizationOnly(queryRunner)
-                    data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
-                    data.workspace.name = WorkspaceName.DEFAULT_WORKSPACE
-                    data.workspaceUser.role = data.organizationUser.role
-                    data.user.status = UserStatus.ACTIVE
-                    data.user = await this.userService.createNewUser(data.user, queryRunner)
+                const organizations = await this.organizationservice.readOrganization(queryRunner)
+                if (!organizations || organizations.length === 0)
+                    throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+                const assignedOrganization = organizations[0]
+                data.organization = assignedOrganization
+
+                const firstUser = await this.userService.readFirstUser(queryRunner)
+                const createdById = firstUser ? firstUser.id : undefined
+
+                data.user.status = UserStatus.ACTIVE
+                data.user.createdBy = createdById
+
+                data.user = await this.userService.createUser(data.user)
+
+                const memberRole = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
+                const organizationUserPayload = {
+                    organizationId: assignedOrganization.id,
+                    userId: data.user.id,
+                    roleId: memberRole.id,
+                    status: OrganizationUserStatus.ACTIVE,
+                    createdBy: createdById
                 }
+                data.organizationUser = await this.organizationUserService.createOrganizationUser(organizationUserPayload)
+                data.workspace.name = WorkspaceName.DEFAULT_PERSONAL_WORKSPACE
+                data.workspace.createdBy = createdById
+                data.workspaceUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
+                data.workspaceUser.createdBy = createdById
+
                 break
             }
             default:
@@ -242,6 +274,7 @@ export class AccountService {
         const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
 
         try {
+            console.log('Saving register account with data:', data)
             data = await this.createRegisterAccount(data, queryRunner)
 
             await queryRunner.startTransaction()

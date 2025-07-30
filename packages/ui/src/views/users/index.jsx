@@ -401,16 +401,6 @@ const Users = () => {
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
                         <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Search Users' title='User Management'>
-                            <StyledPermissionButton
-                                permissionId={'workspace:add-user,users:manage'}
-                                variant='contained'
-                                sx={{ borderRadius: 2, height: '100%' }}
-                                onClick={addNew}
-                                startIcon={<IconPlus />}
-                                id='btn_createUser'
-                            >
-                                Invite User
-                            </StyledPermissionButton>
                         </ViewHeader>
                         {!isLoading && users.length === 0 ? (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
