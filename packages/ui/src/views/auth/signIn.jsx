@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Stack, useTheme, Typography, Box, Alert, Button, Divider, Icon } from '@mui/material'
+import { Stack, useTheme, Typography, Box, Alert, Button, Divider, List, ListItemText, Tabs, Tab } from '@mui/material'
 import { IconExclamationCircle } from '@tabler/icons-react'
 import { LoadingButton } from '@mui/lab'
 
@@ -61,6 +61,7 @@ const SignInPage = () => {
     const [loading, setLoading] = useState(false)
     const [showResendButton, setShowResendButton] = useState(false)
     const [successMessage, setSuccessMessage] = useState('')
+    const [tab, setTab] = useState(0)
 
     const loginApi = useApi(authApi.login)
     const ssoLoginApi = useApi(ssoApi.ssoLogin)
@@ -170,74 +171,194 @@ const SignInPage = () => {
         }
     }
 
+    const handleTabChange = (event, newValue) => {
+        setTab(newValue)
+        if (newValue === 1) {
+            navigate('/register')
+        }
+    }
+
     return (
-        <>
-            <MainCard maxWidth='sm'>
-                <Stack flexDirection='column' sx={{ width: '480px', gap: 3 }}>
-                    {successMessage && (
-                        <Alert variant='filled' severity='success' onClose={() => setSuccessMessage('')}>
-                            {successMessage}
-                        </Alert>
+        <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            {authError && (
+                <Alert
+                    icon={<IconExclamationCircle />}
+                    variant='filled'
+                    severity='error'
+                    sx={{
+                        position: 'fixed',
+                        bottom: 32,
+                        right: 32,
+                        minWidth: 320,
+                        zIndex: 9999,
+                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)'
+                    }}
+                >
+                    {authError.split(', ').length > 0 ? (
+                        <List dense sx={{ py: 0 }}>
+                            {authError.split(', ').map((error, index) => (
+                                <ListItemText key={index} primary={error} primaryTypographyProps={{ color: '#fff !important' }} />
+                            ))}
+                        </List>
+                    ) : (
+                        authError
                     )}
-                    {authError && (
-                        <Alert icon={<IconExclamationCircle />} variant='filled' severity='error'>
-                            {authError}
-                        </Alert>
-                    )}
-                    {showResendButton && (
-                        <Stack sx={{ gap: 1 }}>
-                            <Button variant='text' onClick={handleResendVerification}>
-                                Resend Verification Email
-                            </Button>
-                        </Stack>
-                    )}
-                    <Stack sx={{ gap: 1 }}>
-                        <Typography variant='h1'>Sign In</Typography>
-                        {isCloud && (
-                            <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                                Don&apos;t have an account?{' '}
-                                <Link style={{ color: `${theme.palette.primary.main}` }} to='/register'>
-                                    Sign up for free
-                                </Link>
-                                .
-                            </Typography>
-                        )}
-                        {isEnterpriseLicensed && (
-                            <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                                Have an invite code?{' '}
-                                <Link style={{ color: `${theme.palette.primary.main}` }} to='/register'>
-                                    Sign up for an account
-                                </Link>
-                                .
-                            </Typography>
-                        )}
-                    </Stack>
+                </Alert>
+            )}
+            {successMessage && (
+                <Alert
+                    icon={<IconCircleCheck />}
+                    variant='filled'
+                    severity='success'
+                    sx={{
+                        position: 'fixed',
+                        bottom: 32,
+                        right: 32,
+                        minWidth: 320,
+                        zIndex: 9999,
+                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)'
+                    }}
+                >
+                    {successMessage}
+                </Alert>
+            )}
+            {/* Logo + Welcome */}
+            <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Box
+                    sx={{
+                        bgcolor: '#FFA726',
+                        width: 56,
+                        height: 56,
+                        borderRadius: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mb: 2
+                    }}
+                >
+                    <Typography sx={{ fontWeight: 800, fontSize: 24, color: '#fff' }}>N</Typography>
+                </Box>
+                <Typography
+                    variant='h4'
+                    sx={{
+                        fontFamily: 'Tan Tangkiwood, sans-serif',
+                        fontWeight: 700,
+                        fontSize: 28,
+                        color: '#222',
+                        mb: 1,
+                        textAlign: 'center'
+                    }}
+                >
+                    Welcome to Nuggets
+                </Typography>
+                <Typography sx={{ color: '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
+                    AI-powered workflow automation platform
+                </Typography>
+            </Box>
+            {/* Card */}
+            <Box
+                sx={{
+                    width: 500,
+                    bgcolor: '#fff',
+                    borderRadius: 3,
+                    boxShadow: '0 8px 32px 0 rgba(0,0,0,0.2)',
+                    p: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}
+            >
+                {/* Tabs */}
+                <Tabs
+                    value={tab}
+                    onChange={handleTabChange}
+                    variant='fullWidth'
+                    sx={{
+                        width: '100%',
+                        bgcolor: '#f5f5f4',
+                        borderRadius: '4px',
+                        padding: '6px 8px',
+                        minHeight: 32,
+                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
+                        '& .MuiTabs-indicator': {
+                            backgroundColor: 'transparent',
+                            height: 0
+                        },
+                        '& .MuiTab-root': {
+                            fontWeight: 500,
+                            fontSize: 16,
+                            textTransform: 'none',
+                            minHeight: 32,
+                            bgcolor: '#f5f5f4',
+                            color: '#888',
+                            borderRadius: '4px',
+                            transition: 'color 0.2s, background 0.2s'
+                        },
+                        '& .Mui-selected': {
+                            color: '#FFA726',
+                            bgcolor: '#fff'
+                        }
+                    }}
+                >
+                    <Tab label='Sign In' />
+                    <Tab label='Sign Up' />
+                </Tabs>
+                <Box sx={{ p: 4, pt: 3, width: '100%' }}>
+                    {/* Headline */}
+                    <Typography
+                        variant='h2'
+                        sx={{
+                            fontWeight: 600,
+                            fontSize: 22,
+                            mb: 1,
+                            color: '#222'
+                        }}
+                    >
+                        Sign in to your account
+                    </Typography>
+                    <Typography sx={{ color: '#6b7280', mb: 3, fontSize: 15 }}>
+                        Enter your email and password to access your workflows.
+                    </Typography>
+                    {/* Form */}
                     <form onSubmit={doLogin}>
-                        <Stack sx={{ width: '100%', flexDirection: 'column', alignItems: 'left', justifyContent: 'center', gap: 2 }}>
-                            <Box sx={{ p: 0 }}>
-                                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                    <Typography>
-                                        Email<span style={{ color: 'red' }}>&nbsp;*</span>
-                                    </Typography>
-                                    <div style={{ flexGrow: 1 }}></div>
-                                </div>
+                        <Stack sx={{ width: '100%', gap: 2 }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
+                                    Email <span style={{ color: '#FFA726' }}>*</span>
+                                </Typography>
                                 <Input
                                     inputParam={usernameInput}
                                     onChange={(newValue) => setUsernameVal(newValue)}
                                     value={usernameVal}
                                     showDialog={false}
+                                    sx={{
+                                        '& input': {
+                                            fontSize: 16,
+                                            padding: '10px 14px'
+                                        }
+                                    }}
                                 />
                             </Box>
-                            <Box sx={{ p: 0 }}>
-                                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                    <Typography>
-                                        Password<span style={{ color: 'red' }}>&nbsp;*</span>
-                                    </Typography>
-                                    <div style={{ flexGrow: 1 }}></div>
-                                </div>
-                                <Input inputParam={passwordInput} onChange={(newValue) => setPasswordVal(newValue)} value={passwordVal} />
-                                <Typography variant='body2' sx={{ color: theme.palette.grey[600], mt: 1, textAlign: 'right' }}>
-                                    <Link style={{ color: theme.palette.primary.main }} to='/forgot-password'>
+                            <Box>
+                                <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
+                                    Password <span style={{ color: '#FFA726' }}>*</span>
+                                </Typography>
+                                <Input
+                                    inputParam={passwordInput}
+                                    onChange={(newValue) => setPasswordVal(newValue)}
+                                    value={passwordVal}
+                                    sx={{
+                                        '& input': {
+                                            fontSize: 16,
+                                            padding: '10px 14px'
+                                        }
+                                    }}
+                                />
+                                <Typography
+                                    variant='body2'
+                                    sx={{ color: '#FFA726', mt: 1, textAlign: 'right', fontWeight: 500, fontSize: 14 }}
+                                >
+                                    <Link style={{ color: '#FFA726' }} to='/forgot-password'>
                                         Forgot password?
                                     </Link>
                                 </Typography>
@@ -245,94 +366,50 @@ const SignInPage = () => {
                             <LoadingButton
                                 loading={loading}
                                 variant='contained'
-                                style={{ borderRadius: 12, height: 40, marginRight: 5 }}
                                 type='submit'
+                                sx={{
+                                    borderRadius: 2,
+                                    height: 40,
+                                    fontSize: 16,
+                                    fontWeight: 500,
+                                    bgcolor: '#FFA726',
+                                    color: '#fff',
+                                    boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)',
+                                    mt: 2,
+                                    '&:hover': {
+                                        bgcolor: '#FFA726',
+                                        opacity: 0.85
+                                    }
+                                }}
                             >
                                 Login
                             </LoadingButton>
-                            {configuredSsoProviders && configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>OR</Divider>}
-                            {configuredSsoProviders &&
-                                configuredSsoProviders.map(
-                                    (ssoProvider) =>
-                                        //https://learn.microsoft.com/en-us/entra/identity-platform/howto-add-branding-in-apps
-                                        ssoProvider === 'azure' && (
-                                            <Button
-                                                key={ssoProvider}
-                                                variant='outlined'
-                                                style={{ borderRadius: 12, height: 45, marginRight: 5, lineHeight: 0 }}
-                                                onClick={() => signInWithSSO(ssoProvider)}
-                                                startIcon={
-                                                    <Icon>
-                                                        <img src={AzureSSOLoginIcon} alt={'MicrosoftSSO'} width={20} height={20} />
-                                                    </Icon>
-                                                }
-                                            >
-                                                Sign In With Microsoft
-                                            </Button>
-                                        )
-                                )}
-                            {configuredSsoProviders &&
-                                configuredSsoProviders.map(
-                                    (ssoProvider) =>
-                                        ssoProvider === 'google' && (
-                                            <Button
-                                                key={ssoProvider}
-                                                variant='outlined'
-                                                style={{ borderRadius: 12, height: 45, marginRight: 5, lineHeight: 0 }}
-                                                onClick={() => signInWithSSO(ssoProvider)}
-                                                startIcon={
-                                                    <Icon>
-                                                        <img src={GoogleSSOLoginIcon} alt={'GoogleSSO'} width={20} height={20} />
-                                                    </Icon>
-                                                }
-                                            >
-                                                Sign In With Google
-                                            </Button>
-                                        )
-                                )}
-                            {configuredSsoProviders &&
-                                configuredSsoProviders.map(
-                                    (ssoProvider) =>
-                                        ssoProvider === 'auth0' && (
-                                            <Button
-                                                key={ssoProvider}
-                                                variant='outlined'
-                                                style={{ borderRadius: 12, height: 45, marginRight: 5, lineHeight: 0 }}
-                                                onClick={() => signInWithSSO(ssoProvider)}
-                                                startIcon={
-                                                    <Icon>
-                                                        <img src={Auth0SSOLoginIcon} alt={'Auth0SSO'} width={20} height={20} />
-                                                    </Icon>
-                                                }
-                                            >
-                                                Sign In With Auth0 by Okta
-                                            </Button>
-                                        )
-                                )}
-                            {configuredSsoProviders &&
-                                configuredSsoProviders.map(
-                                    (ssoProvider) =>
-                                        ssoProvider === 'github' && (
-                                            <Button
-                                                key={ssoProvider}
-                                                variant='outlined'
-                                                style={{ borderRadius: 12, height: 45, marginRight: 5, lineHeight: 0 }}
-                                                onClick={() => signInWithSSO(ssoProvider)}
-                                                startIcon={
-                                                    <Icon>
-                                                        <img src={GithubSSOLoginIcon} alt={'GithubSSO'} width={20} height={20} />
-                                                    </Icon>
-                                                }
-                                            >
-                                                Sign In With Github
-                                            </Button>
-                                        )
-                                )}
                         </Stack>
                     </form>
-                </Stack>
-            </MainCard>
-        </>
+                    <Divider sx={{ my: 3, fontSize: 12 }}>OR CONTINUE WITH</Divider>
+                    <Button
+                        variant='outlined'
+                        disabled
+                        startIcon={<img src={GoogleSSOLoginIcon} alt='Google' style={{ width: 24, height: 24 }} />}
+                        sx={{
+                            width: '100%',
+                            height: 40,
+                            borderRadius: 2,
+                            fontWeight: 500,
+                            fontSize: 14,
+                            color: '#888',
+                            borderColor: '#eee',
+                            background: '#fafafa',
+                            textTransform: 'none',
+                            opacity: 1,
+                            cursor: 'not-allowed'
+                        }}
+                    >
+                        Sign in with Google (Coming Soon)
+                    </Button>
+                </Box>
+            </Box>
+        </Box>
     )
 }
 
