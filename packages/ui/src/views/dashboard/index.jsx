@@ -171,13 +171,18 @@ const Dashboard = () => {
                 minHeight: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                py: { xs: 4, md: 6 },
                 bgcolor: isDarkMode ? '#18181b' : '#f9fafb'
             }}
         >
-            <Stack spacing={3} alignItems='center' width='100%'>
+            <Box
+                sx={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
                 <Typography
                     variant='h2'
                     sx={{
@@ -191,101 +196,24 @@ const Dashboard = () => {
                 >
                     What's today's Nugget-worthy idea?
                 </Typography>
-                <Stack direction='row' spacing={1.5} alignItems='center' justifyContent='center'>
-                    <Button
-                        onClick={() => {
-                            dispatch({ type: MENU_OPEN, id: 'marketplaces' })
-                            navigate('/marketplaces')
-                        }}
-                        startIcon={
-                            <IconBulb size={16} style={{ color: active === 'browse' ? '#ffe066' : isDarkMode ? '#444' : '#bdbdbd' }} />
-                        }
-                        disableElevation
-                        sx={{
-                            fontWeight: 700,
-                            fontSize: 15,
-                            px: 2.5,
-                            py: 0.5,
-                            borderRadius: '10px',
-                            border: '2px solid',
-                            borderColor: active === 'browse' ? '#ffe066' : isDarkMode ? '#333' : '#e0e0e0',
-                            bgcolor: active === 'browse' ? (isDarkMode ? '#292211' : '#fffde7') : isDarkMode ? '#23272a' : '#fff',
-                            color: active === 'browse' ? (isDarkMode ? '#ffe066' : '#ffe066') : isDarkMode ? '#888' : '#bdbdbd',
-                            boxShadow: 'none',
-                            minWidth: 0,
-                            transition: 'all 0.2s',
-                            '&:hover': {
-                                bgcolor: active === 'browse' ? (isDarkMode ? '#292211' : '#fffde7') : isDarkMode ? '#23272a' : '#f5f5f5',
-                                borderColor: active === 'browse' ? '#ffe066' : isDarkMode ? '#333' : '#e0e0e0',
-                                color: active === 'browse' ? '#ffe066' : isDarkMode ? '#888' : '#bdbdbd',
-                                opacity: 0.6
-                            }
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontWeight: 700,
-                                fontSize: 15
-                            }}
-                        >
-                            Browse Buckets
-                        </span>
-                    </Button>
-                    <Typography
-                        sx={{
-                            color: isDarkMode ? '#888' : '#888',
-                            fontWeight: 600,
-                            fontSize: 15
-                        }}
-                    >
-                        or
-                    </Typography>
-                    <Button
-                        onClick={() => {
-                            navigate('/canvas')
-                        }}
-                        disableElevation
-                        sx={{
-                            fontWeight: 700,
-                            fontSize: 15,
-                            px: 2.5,
-                            py: 0.5,
-                            borderRadius: '10px',
-                            border: '2px solid',
-                            borderColor: '#e0e0e0',
-                            bgcolor: active === 'scratch' ? (isDarkMode ? '#23272a' : '#f5f5f5') : isDarkMode ? '#23272a' : '#fff',
-                            color: active === 'scratch' ? (isDarkMode ? '#fff' : '#444') : isDarkMode ? '#888' : '#bdbdbd',
-                            boxShadow: 'none',
-                            minWidth: 0,
-                            transition: 'all 0.2s',
-                            '&:hover': {
-                                bgcolor: isDarkMode ? '#292211' : '#fffde7',
-                                borderColor: isDarkMode ? '#ffe066' : '#ffe066',
-                                color: '#ffe066',
-                                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)'
-                            }
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontWeight: 700,
-                                fontSize: 15
-                            }}
-                        >
-                            Start from scratch
-                        </span>
-                    </Button>
-                </Stack>
+            </Box>
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    pb: { xs: 4, md: 6 }
+                }}
+            >
                 <Card
                     elevation={0}
                     sx={{
-                        mt: 1.5,
                         px: { xs: 2, md: 3 },
                         pt: { xs: 2, md: 3 },
                         pb: { xs: 1, md: 1 },
                         borderRadius: '20px',
                         minWidth: { xs: 320, md: 600 },
-                        maxWidth: 720,
+                        maxWidth: 820,
                         width: '100%',
                         bgcolor: isDarkMode ? '#23272a' : '#fff',
                         boxShadow: '0 4px 24px 0 rgba(0,0,0,0.08)',
@@ -294,7 +222,7 @@ const Dashboard = () => {
                         flexDirection: 'column',
                         alignItems: 'stretch',
                         justifyContent: 'flex-start',
-                        position: 'relative' // Add relative for absolute badge
+                        position: 'relative'
                     }}
                 >
                     <TextField
@@ -413,100 +341,100 @@ const Dashboard = () => {
                         </Button>
                     </Stack>
                 </Card>
+            </Box>
 
-                {/* Model Select Dialog */}
-                <Dialog
-                    open={modelDialogOpen}
-                    onClose={handleCloseModelDialog}
-                    maxWidth='sm'
-                    fullWidth
-                    PaperProps={{
-                        sx: {
-                            borderRadius: 4,
-                            p: 2
-                        }
-                    }}
-                >
-                    <DialogTitle sx={{ fontWeight: 700, fontSize: 20, mb: 1 }}>Select model to generate agentflow</DialogTitle>
-                    <DialogContent>
-                        <Box sx={{ mt: 2 }}>
-                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                                <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
-                                    Select model<span style={{ color: 'red' }}>&nbsp;*</span>
-                                </Typography>
-                            </div>
-                            <Dropdown
-                                key={JSON.stringify(selectedModel)}
-                                name={'chatModel'}
-                                options={chatModelsOptions ?? []}
-                                onSelect={(newValue) => {
-                                    if (!newValue) {
-                                        setSelectedModel(null)
-                                    } else {
-                                        const foundChatComponent = chatModelsComponents.find((chatModel) => chatModel.name === newValue)
-                                        if (foundChatComponent) {
-                                            const chatModelId = `${foundChatComponent.name}_0`
-                                            const clonedComponent = cloneDeep(foundChatComponent)
-                                            const initChatModelData = initNode(clonedComponent, chatModelId)
-                                            setSelectedModel(initChatModelData)
-                                        }
+            {/* Model Select Dialog */}
+            <Dialog
+                open={modelDialogOpen}
+                onClose={handleCloseModelDialog}
+                maxWidth='sm'
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 4,
+                        p: 2
+                    }
+                }}
+            >
+                <DialogTitle sx={{ fontWeight: 700, fontSize: 20, mb: 1 }}>Select model to generate agentflow</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ mt: 2 }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                            <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
+                                Select model<span style={{ color: 'red' }}>&nbsp;*</span>
+                            </Typography>
+                        </div>
+                        <Dropdown
+                            key={JSON.stringify(selectedModel)}
+                            name={'chatModel'}
+                            options={chatModelsOptions ?? []}
+                            onSelect={(newValue) => {
+                                if (!newValue) {
+                                    setSelectedModel(null)
+                                } else {
+                                    const foundChatComponent = chatModelsComponents.find((chatModel) => chatModel.name === newValue)
+                                    if (foundChatComponent) {
+                                        const chatModelId = `${foundChatComponent.name}_0`
+                                        const clonedComponent = cloneDeep(foundChatComponent)
+                                        const initChatModelData = initNode(clonedComponent, chatModelId)
+                                        setSelectedModel(initChatModelData)
                                     }
-                                }}
-                                value={selectedModel ? selectedModel?.name : 'choose an option'}
-                            />
-                        </Box>
-                        {selectedModel && Object.keys(selectedModel).length > 0 && (
-                            <Box
-                                sx={{
-                                    p: 0,
-                                    mt: 2,
-                                    mb: 1,
-                                    border: 1,
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2
-                                }}
-                            >
-                                {showHideInputParams(selectedModel)
-                                    .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
-                                    .map((inputParam, index) => (
-                                        <DocStoreInputHandler
-                                            key={index}
-                                            inputParam={inputParam}
-                                            data={selectedModel}
-                                            onNodeDataChange={handleChatModelDataChange}
-                                        />
-                                    ))}
-                            </Box>
-                        )}
-                    </DialogContent>
-                    <DialogActions sx={{ justifyContent: 'flex-end', px: 3, pb: 2 }}>
-                        <Button onClick={handleCloseModelDialog}>Cancel</Button>
-                        <StyledPermissionButton
-                            permissionId={'agentflows:create'}
-                            variant='contained'
-                            onClick={() => {
-                                setModelDialogOpen(false)
+                                }
                             }}
-                            startIcon={<IconPlus />}
-                            sx={{ borderRadius: 2, height: 40, fontWeight: 700, fontSize: 16 }}
-                            disabled={
-                                !selectedModel ||
-                                !Object.keys(selectedModel).length ||
-                                showHideInputParams(selectedModel)
-                                    .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
-                                    .some(
-                                        (inputParam) =>
-                                            inputParam.required &&
-                                            (selectedModel.inputs?.[inputParam.name] === undefined ||
-                                                selectedModel.inputs?.[inputParam.name] === '')
-                                    )
-                            }
+                            value={selectedModel ? selectedModel?.name : 'choose an option'}
+                        />
+                    </Box>
+                    {selectedModel && Object.keys(selectedModel).length > 0 && (
+                        <Box
+                            sx={{
+                                p: 0,
+                                mt: 2,
+                                mb: 1,
+                                border: 1,
+                                borderColor: theme.palette.grey[900] + 25,
+                                borderRadius: 2
+                            }}
                         >
-                            Add Model
-                        </StyledPermissionButton>
-                    </DialogActions>
-                </Dialog>
-            </Stack>
+                            {showHideInputParams(selectedModel)
+                                .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
+                                .map((inputParam, index) => (
+                                    <DocStoreInputHandler
+                                        key={index}
+                                        inputParam={inputParam}
+                                        data={selectedModel}
+                                        onNodeDataChange={handleChatModelDataChange}
+                                    />
+                                ))}
+                        </Box>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'flex-end', px: 3, pb: 2 }}>
+                    <Button onClick={handleCloseModelDialog}>Cancel</Button>
+                    <StyledPermissionButton
+                        permissionId={'agentflows:create'}
+                        variant='contained'
+                        onClick={() => {
+                            setModelDialogOpen(false)
+                        }}
+                        startIcon={<IconPlus />}
+                        sx={{ borderRadius: 2, height: 40, fontWeight: 700, fontSize: 16 }}
+                        disabled={
+                            !selectedModel ||
+                            !Object.keys(selectedModel).length ||
+                            showHideInputParams(selectedModel)
+                                .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
+                                .some(
+                                    (inputParam) =>
+                                        inputParam.required &&
+                                        (selectedModel.inputs?.[inputParam.name] === undefined ||
+                                            selectedModel.inputs?.[inputParam.name] === '')
+                                )
+                        }
+                    >
+                        Add Model
+                    </StyledPermissionButton>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }
