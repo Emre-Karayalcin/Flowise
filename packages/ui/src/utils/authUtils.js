@@ -33,10 +33,12 @@ const clearAllCookies = () => {
 }
 
 const extractUser = (payload) => {
+    console.log('extractUser payload', payload)
     const user = {
         id: payload.id,
         email: payload.email,
         name: payload.name,
+        credits: payload.credits,
         status: payload.status,
         role: payload.role,
         isSSO: payload.isSSO,

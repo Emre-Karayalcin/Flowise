@@ -14,6 +14,7 @@ import {
     Box,
     Button,
     ButtonBase,
+    Chip,
     Checkbox,
     ClickAwayListener,
     Dialog,
@@ -432,10 +433,21 @@ const ProfileSection = ({ handleLogout }) => {
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                     {isAuthenticated && currentUser ? (
-                                        <Box sx={{ p: 2 }}>
-                                            <Typography component='span' variant='h4'>
-                                                {currentUser.name}
-                                            </Typography>
+                                        <Box sx={{ pt: 2 }}>
+                                            <Box sx={{ px: 2 }}>
+                                                <Typography component='div' variant='h4'>
+                                                    {currentUser.name}
+                                                </Typography>
+                                            </Box>
+                                            { !currentUser.isOrganizationAdmin &&
+                                                <Box sx={{ pt: 1 , px: 2 }}>
+                                                    <Chip
+                                                        label={`Credit: ${currentUser.credits}`}
+                                                        color="primary"
+                                                        sx={{ fontWeight: 700, fontSize: 14, color: '#fff', borderRadius: '12px' }}
+                                                    />
+                                                </Box>
+                                            }
                                         </Box>
                                     ) : (
                                         <Box sx={{ p: 2 }}>

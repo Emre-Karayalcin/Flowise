@@ -10,6 +10,7 @@ export class IUser {
     id: string
     email: string
     name: string
+    credits?: number
     credential: string
     status: UserStatus
     tempToken: string
@@ -65,6 +66,7 @@ export type LoggedInUser = {
     email: string
     name: string
     roleId: string
+    credits?: number
     activeOrganizationId: string
     activeOrganizationSubscriptionId: string
     activeOrganizationCustomerId: string

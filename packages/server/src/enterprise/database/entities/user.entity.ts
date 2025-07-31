@@ -89,4 +89,7 @@ export class User {
 
     @OneToMany(() => LoginMethod, (loginMethod) => loginMethod.updatedByUser)
     updatedByLoginMethod?: LoginMethod[]
+
+    @Column({ type: 'integer', default: 0 })
+    credits: number
 }

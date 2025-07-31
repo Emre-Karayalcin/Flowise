@@ -100,6 +100,10 @@ export class UserService {
             data.updatedBy = data.id
         }
 
+        if (typeof data.credits === 'undefined') {
+            data.credits = 100
+        }
+
         return queryRunner.manager.create(User, data)
     }
 

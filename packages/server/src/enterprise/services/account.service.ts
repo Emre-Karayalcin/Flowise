@@ -514,7 +514,10 @@ export class AccountService {
             if (platform === Platform.ENTERPRISE) {
                 await auditService.recordLoginActivity(user.email, LoginActivityCode.LOGIN_SUCCESS, 'Login Success')
             }
-            return { user, workspaceDetails: wsUserOrUsers }
+            return {
+                user,
+                workspaceDetails: wsUserOrUsers
+            }
         } finally {
             await queryRunner.release()
         }

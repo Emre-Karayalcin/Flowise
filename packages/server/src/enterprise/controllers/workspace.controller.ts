@@ -121,6 +121,7 @@ export class WorkspaceController {
 
             const loggedInUser: LoggedInUser & { role: string; isSSO: boolean } = {
                 ...req.user,
+                credits: user.credits,
                 activeOrganizationId: org.id,
                 activeOrganizationSubscriptionId: subscriptionId,
                 activeOrganizationCustomerId: customerId,

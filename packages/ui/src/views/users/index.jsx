@@ -155,6 +155,9 @@ function ShowUserRow(props) {
                     {'INVITED' === props.row.status.toUpperCase() && <Chip color={'warning'} label={props.row.status.toUpperCase()} />}
                     {'INACTIVE' === props.row.status.toUpperCase() && <Chip color={'error'} label={props.row.status.toUpperCase()} />}
                 </StyledTableCell>
+                <StyledTableCell sx={{ textAlign: 'center' }}>
+                    {props.row.user.credits ? props.row.user.credits : 0}
+                </StyledTableCell>
                 <StyledTableCell>{!props.row.lastLogin ? 'Never' : moment(props.row.lastLogin).format('DD/MM/YYYY HH:mm')}</StyledTableCell>
                 <StyledTableCell>
                     {props.row.status.toUpperCase() === 'INVITED' && (
@@ -436,6 +439,7 @@ const Users = () => {
                                                         <StyledTableCell>Email/Name</StyledTableCell>
                                                         <StyledTableCell>Assigned Roles</StyledTableCell>
                                                         <StyledTableCell>Status</StyledTableCell>
+                                                        <StyledTableCell>Credits</StyledTableCell>
                                                         <StyledTableCell>Last Login</StyledTableCell>
                                                         <StyledTableCell> </StyledTableCell>
                                                     </TableRow>
@@ -462,8 +466,14 @@ const Users = () => {
                                                                 <StyledTableCell>
                                                                     <Skeleton variant='text' />
                                                                 </StyledTableCell>
+                                                                <StyledTableCell>
+                                                                    <Skeleton variant='text' />
+                                                                </StyledTableCell>
                                                             </StyledTableRow>
                                                             <StyledTableRow>
+                                                                <StyledTableCell>
+                                                                    <Skeleton variant='text' />
+                                                                </StyledTableCell>
                                                                 <StyledTableCell>
                                                                     <Skeleton variant='text' />
                                                                 </StyledTableCell>

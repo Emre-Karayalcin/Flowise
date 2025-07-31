@@ -157,6 +157,7 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                         email: response.user.email,
                         name: response.user?.name,
                         roleId: workspaceUser.roleId,
+                        credits: response.user.credits,
                         activeOrganizationId: organization.id,
                         activeOrganizationSubscriptionId: subscriptionId,
                         activeOrganizationCustomerId: customerId,
