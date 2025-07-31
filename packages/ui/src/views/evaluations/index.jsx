@@ -59,7 +59,7 @@ import {
     IconPlayerPlay,
     IconPlayerPause
 } from '@tabler/icons-react'
-import empty_evalSVG from '@/assets/images/empty_evals.svg'
+import empty_evalSVG from '@/assets/images/evaluations-img.png'
 
 const EvalsEvaluation = () => {
     const theme = useTheme()

@@ -41,7 +41,7 @@ import useNotifier from '@/utils/useNotifier'
 import useConfirm from '@/hooks/useConfirm'
 
 // icons
-import empty_datasetSVG from '@/assets/images/empty_datasets.svg'
+import empty_datasetSVG from '@/assets/images/dataset-img.png'
 import { IconEdit, IconX, IconUnlink, IconUserPlus } from '@tabler/icons-react'
 
 // store

@@ -28,7 +28,7 @@ import useApi from '@/hooks/useApi'
 import { useError } from '@/store/context/ErrorContext'
 
 // icons
-import empty_evaluatorSVG from '@/assets/images/empty_evaluators.svg'
+import empty_evaluatorSVG from '@/assets/images/evaluators-img.png'
 import { IconTrash, IconPlus, IconJson, IconX, IconNumber123, IconAbc, IconAugmentedReality } from '@tabler/icons-react'
 
 // const

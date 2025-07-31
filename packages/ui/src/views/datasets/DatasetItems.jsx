@@ -43,7 +43,7 @@ import useConfirm from '@/hooks/useConfirm'
 import { useAuth } from '@/hooks/useAuth'
 
 // icons
-import empty_datasetSVG from '@/assets/images/empty_datasets.svg'
+import empty_datasetSVG from '@/assets/images/dataset-img.png'
 import { IconTrash, IconPlus, IconX, IconUpload, IconArrowsDownUp } from '@tabler/icons-react'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 

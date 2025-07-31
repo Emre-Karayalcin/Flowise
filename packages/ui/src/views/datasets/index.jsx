@@ -41,7 +41,7 @@ import useApi from '@/hooks/useApi'
 import useNotifier from '@/utils/useNotifier'
 
 // icons
-import empty_datasetSVG from '@/assets/images/empty_datasets.svg'
+import empty_datasetSVG from '@/assets/images/dataset-img.png'
 import { IconTrash, IconEdit, IconPlus, IconX } from '@tabler/icons-react'
 
 // Utils

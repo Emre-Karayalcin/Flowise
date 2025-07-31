@@ -46,7 +46,7 @@ import useNotifier from '@/utils/useNotifier'
 
 // Icons
 import { IconEdit, IconPlus, IconEye, IconEyeOff, IconX, IconTrash } from '@tabler/icons-react'
-import roles_emptySVG from '@/assets/images/roles_empty.svg'
+import roles_emptySVG from '@/assets/images/roles-img.png'
 
 import { useError } from '@/store/context/ErrorContext'
 
