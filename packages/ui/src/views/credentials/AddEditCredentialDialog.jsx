@@ -262,7 +262,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                     response_type: 'code',
                     response_mode: 'query',
                     additionalParameters: '',
-                    clientId: '9287757523622'
+                    clientId: '9287757523621.9286955335814'
                 }
             }
 
