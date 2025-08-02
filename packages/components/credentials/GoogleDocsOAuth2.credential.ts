@@ -17,7 +17,7 @@ class GoogleDocsOAuth2 implements INodeCredential {
         this.name = 'googleDocsOAuth2'
         this.version = 1.0
         this.description =
-            'Google Docs OAuth2 credentials for accessing Google Docs API'
+            ''
         this.inputs = []
     }
 }

@@ -12,7 +12,7 @@ class SlackApi implements INodeCredential {
         this.name = 'slackApi'
         this.version = 1.0
         this.description =
-            'Refer to <a target="_blank" href="https://github.com/modelcontextprotocol/servers/tree/main/src/slack">official guide</a> on how to get botToken and teamId on Slack'
+            ''
         this.inputs = []
     }
 }

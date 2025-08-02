@@ -12,7 +12,7 @@ class NotionApi implements INodeCredential {
         this.name = 'notionApi'
         this.version = 1.0
         this.description =
-            'You can find integration token <a target="_blank" href="https://developers.notion.com/docs/create-a-notion-integration#step-1-create-an-integration">here</a>'
+            ''
         this.inputs = []
     }
 }

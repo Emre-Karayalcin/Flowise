@@ -17,7 +17,7 @@ class GoogleDriveOAuth2 implements INodeCredential {
         this.name = 'googleDriveOAuth2'
         this.version = 1.0
         this.description =
-            'Google Drive OAuth2 credentials for accessing Google Drive API';
+            '';
         this.inputs = []
     }
 }

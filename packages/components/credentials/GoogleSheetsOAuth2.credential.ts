@@ -17,7 +17,7 @@ class GoogleSheetsOAuth2 implements INodeCredential {
         this.name = 'googleSheetsOAuth2'
         this.version = 1.0
         this.description =
-            'Google Sheets OAuth2 credentials for accessing Google Sheets API'
+            ''
         this.inputs = []
     }
 }

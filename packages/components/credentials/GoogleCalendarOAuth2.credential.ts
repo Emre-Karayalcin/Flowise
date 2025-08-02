@@ -13,7 +13,7 @@ class GoogleCalendarOAuth2 implements INodeCredential {
         this.name = 'googleCalendarOAuth2'
         this.version = 1.0
         this.description =
-            'Google Calendar OAuth2 credentials for accessing Google Calendar API'
+            ''
         this.inputs = []
     }
 }

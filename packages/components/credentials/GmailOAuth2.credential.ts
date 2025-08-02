@@ -18,7 +18,7 @@ class GmailOAuth2 implements INodeCredential {
         this.name = 'gmailOAuth2'
         this.version = 1.0
         this.description =
-            'Gmail OAuth2 credentials for accessing Gmail API'
+            ''
         this.inputs = []
     }
 }

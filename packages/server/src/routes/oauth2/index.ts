@@ -71,7 +71,7 @@ const router = express.Router()
 // Helper function to get OAuth config based on credential type
 const getOAuthConfig = (credentialName: string, decryptedData: any) => {
     let { clientId, clientSecret, accessTokenUrl, redirect_uri, scope } = decryptedData
-    
+
     // Special handling for Figma API
     if (credentialName === 'figmaApi') {
         clientId = clientId || process.env.FIGMA_CLIENT_ID
@@ -97,19 +97,13 @@ const getOAuthConfig = (credentialName: string, decryptedData: any) => {
     }
 
     // Special handling for Google OAuth2 services
-    const googleServices = [
-        'googleCalendarOAuth2',
-        'googleSheetsOAuth2', 
-        'googleDocsOAuth2',
-        'gmailOAuth2',
-        'googleDriveOAuth2'
-    ]
+    const googleServices = ['googleCalendarOAuth2', 'googleSheetsOAuth2', 'googleDocsOAuth2', 'gmailOAuth2', 'googleDriveOAuth2']
 
     if (googleServices.includes(credentialName)) {
         clientId = clientId || process.env.GOOGLE_CLIENT_ID
         clientSecret = process.env.GOOGLE_CLIENT_SECRET || clientSecret
         accessTokenUrl = accessTokenUrl || 'https://oauth2.googleapis.com/token'
-        
+
         // Set default scopes if not provided
         if (!scope) {
             const defaultScopes = {
@@ -135,16 +129,15 @@ const processTokenData = (credentialName: string, tokenData: any, decryptedData:
         token_received_at: new Date().toISOString()
     }
 
-    const googleServices = [
-        'googleCalendarOAuth2',
-        'googleSheetsOAuth2', 
-        'googleDocsOAuth2',
-        'gmailOAuth2',
-        'googleDriveOAuth2'
-    ]
+    const googleServices = ['googleCalendarOAuth2', 'googleSheetsOAuth2', 'googleDocsOAuth2', 'gmailOAuth2', 'googleDriveOAuth2']
 
     // Common token handling for Figma, Notion, Slack and Google services
-    if (credentialName === 'figmaApi' || credentialName === 'notionApi' || credentialName === 'slackApi' || googleServices.includes(credentialName)) {
+    if (
+        credentialName === 'figmaApi' ||
+        credentialName === 'notionApi' ||
+        credentialName === 'slackApi' ||
+        googleServices.includes(credentialName)
+    ) {
         if (tokenData.expires_in) {
             updatedCredentialData.expires_in = tokenData.expires_in
         }
@@ -211,7 +204,7 @@ const processTokenData = (credentialName: string, tokenData: any, decryptedData:
         if (tokenData.refresh_token) {
             updatedCredentialData.refresh_token = tokenData.refresh_token
         }
-        Object.keys(tokenData).forEach(key => {
+        Object.keys(tokenData).forEach((key) => {
             if (!updatedCredentialData.hasOwnProperty(key)) {
                 updatedCredentialData[key] = tokenData[key]
             }
@@ -356,7 +349,7 @@ router.get('/callback', async (req: Request, res: Response) => {
         const decryptedData = await decryptCredentialData(credential.encryptedData)
         const { clientId, clientSecret, accessTokenUrl, redirect_uri, scope } = getOAuthConfig(credential.credentialName, decryptedData)
 
-        if (!clientId || !clientSecret) {
+        if (!clientId) {
             const errorHtml = generateErrorPage(
                 'Missing OAuth configuration',
                 'Missing clientId or clientSecret',
@@ -382,23 +375,23 @@ router.get('/callback', async (req: Request, res: Response) => {
         const defaultRedirectUri = `${req.protocol}://${req.get('host')}/api/v1/oauth2-credential/callback`
         const finalRedirectUri = redirect_uri || defaultRedirectUri
 
-        const tokenRequestData: any = {
-            client_id: clientId,
-            client_secret: clientSecret,
-            code: code as string,
-            grant_type: 'authorization_code',
-            redirect_uri: finalRedirectUri
-        }
+            const tokenRequestData: any = {
+                client_id: clientId,
+                client_secret: clientSecret,
+                code: code as string,
+                grant_type: 'authorization_code',
+                redirect_uri: finalRedirectUri
+            }
 
-        if (scope && credential.credentialName !== 'notionApi') {
-            tokenRequestData.scope = scope
-        }
+            if (scope && credential.credentialName !== 'notionApi') {
+                tokenRequestData.scope = scope
+            }
 
         const tokenResponse = await axios.post(tokenUrl, new URLSearchParams(tokenRequestData).toString(), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Accept: 'application/json'
-            }
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Accept: 'application/json'
+                }
         })
 
         const tokenData = tokenResponse.data
@@ -421,8 +414,10 @@ router.get('/callback', async (req: Request, res: Response) => {
         res.setHeader('Content-Type', 'text/html')
         res.send(successHtml)
     } catch (error) {
+        console.error('OAuth2 callback error:', error)
         if (axios.isAxiosError(error)) {
             const axiosError = error
+            console.log('OAuth2 callback error:', axiosError.response?.data || axiosError.message)
             const errorHtml = generateErrorPage(
                 axiosError.response?.data?.error || 'token_exchange_failed',
                 axiosError.response?.data?.error_description || 'Token exchange failed',
@@ -483,23 +478,53 @@ router.post('/refresh/:credentialId', async (req: Request, res: Response, next: 
             })
         }
 
-        const refreshRequestData: any = {
-            client_id: clientId,
-            client_secret: clientSecret,
-            grant_type: 'refresh_token',
-            refresh_token
-        }
+        console.log('Making token refresh request to:', tokenUrl)
 
-        if (scope && credential.credentialName !== 'notionApi') {
-            refreshRequestData.scope = scope
-        }
+        let tokenResponse
 
-        const tokenResponse = await axios.post(tokenUrl, new URLSearchParams(refreshRequestData).toString(), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                Accept: 'application/json'
+        // Special handling for Notion API refresh - uses JSON payload and Basic Auth
+        if (credential.credentialName === 'notionApi') {
+            if (!clientSecret) {
+                console.error('[Notion OAuth] clientSecret missing, cannot proceed refresh');
+                return res.status(400).json({
+                    success: false,
+                    message: 'Notion OAuth requires client secret for token refresh'
+                })
             }
-        })
+
+            const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+            const payload = {
+                grant_type: 'refresh_token',
+                refresh_token
+            }
+
+            tokenResponse = await axios.post(tokenUrl, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Basic ${basicAuth}`,
+                    'Notion-Version': '2022-06-28'
+                }
+            })
+        } else {
+            const refreshRequestData: any = {
+                client_id: clientId,
+                client_secret: clientSecret,
+                grant_type: 'refresh_token',
+                refresh_token
+            }
+
+            if (scope && credential.credentialName !== 'notionApi') {
+                refreshRequestData.scope = scope
+            }
+
+            tokenResponse = await axios.post(tokenUrl, new URLSearchParams(refreshRequestData).toString(), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Accept: 'application/json'
+                }
+            })
+        }
 
         const tokenData = tokenResponse.data
 
