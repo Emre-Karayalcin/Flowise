@@ -200,6 +200,7 @@ router.get('/callback', async (req: Request, res: Response) => {
         let { clientId, clientSecret, accessTokenUrl, redirect_uri, scope } = decryptedData
         
         if (credential.credentialName === 'figmaApi') {
+            clientSecret = process.env.FIGMA_CLIENT_SECRET || clientSecret
             accessTokenUrl = accessTokenUrl || 'https://www.figma.com/api/oauth/token'
             scope = scope || 'file_read'
         }
@@ -208,7 +209,7 @@ router.get('/callback', async (req: Request, res: Response) => {
             const errorHtml = generateErrorPage(
                 'Missing OAuth configuration',
                 'Missing clientId or clientSecret',
-                'Please check your credential setup.'
+                'Please check your credential setup and environment variables.'
             )
 
             res.setHeader('Content-Type', 'text/html')
@@ -306,6 +307,7 @@ router.get('/callback', async (req: Request, res: Response) => {
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const axiosError = error
+            console.log('OAuth2 callback error:', axiosError.response?.data || axiosError.message)
             const errorHtml = generateErrorPage(
                 axiosError.response?.data?.error || 'token_exchange_failed',
                 axiosError.response?.data?.error_description || 'Token exchange failed',
@@ -351,7 +353,10 @@ router.post('/refresh/:credentialId', async (req: Request, res: Response, next: 
 
         let { clientId, clientSecret, refresh_token, accessTokenUrl, scope } = decryptedData
 
+        // Special handling for Figma API
         if (credential.credentialName === 'figmaApi') {
+            clientId = clientId || process.env.FIGMA_CLIENT_ID
+            clientSecret = process.env.FIGMA_CLIENT_SECRET || clientSecret
             accessTokenUrl = accessTokenUrl || 'https://www.figma.com/api/oauth/token'
             scope = scope || 'file_read'
         }
