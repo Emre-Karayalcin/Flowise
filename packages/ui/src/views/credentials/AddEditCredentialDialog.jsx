@@ -216,6 +216,24 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     const setOAuth2 = async () => {
         try {
             let credentialId = null
+            let finalCredentialData = { ...credentialData }
+
+            // Custom logic for figmaAPI
+            if (componentCredential.name && componentCredential.name.includes('figmaApi')) {
+                // Set default values for Figma OAuth2
+                finalCredentialData = {
+                    ...finalCredentialData,
+                    authorizationUrl: 'https://www.figma.com/oauth',
+                    tokenUrl: 'https://www.figma.com/api/oauth/token',
+                    redirect_uri: 'https://beta.buildnuggets.ai/api/v1/oauth2-credential/callback',
+                    scope: 'file_read',
+                    response_type: 'code',
+                    response_mode: 'query',
+                    additionalParameters: '',
+                    clientId: 'D0ZHbUhqtbVQ727cnKaWgK',
+                    clientSecret: 'cW2iKHr4WoCKLEW9JP30PhZsXaoW0o'
+                }
+            }
 
             // First save or add the credential
             if (dialogProps.type === 'ADD') {
@@ -223,7 +241,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 const obj = {
                     name,
                     credentialName: componentCredential.name,
-                    plainDataObj: credentialData
+                    plainDataObj: finalCredentialData
                 }
                 const createResp = await credentialsApi.createCredential(obj)
                 if (createResp.data) {
@@ -237,9 +255,9 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 }
 
                 let plainDataObj = {}
-                for (const key in credentialData) {
-                    if (credentialData[key] !== REDACTED_CREDENTIAL_VALUE) {
-                        plainDataObj[key] = credentialData[key]
+                for (const key in finalCredentialData) {
+                    if (finalCredentialData[key] !== REDACTED_CREDENTIAL_VALUE) {
+                        plainDataObj[key] = finalCredentialData[key]
                     }
                 }
                 if (Object.keys(plainDataObj).length) saveObj.plainDataObj = plainDataObj
@@ -484,6 +502,13 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                     <Box sx={{ p: 2 }}>
                         <Button variant='contained' color='secondary' onClick={() => setOAuth2()}>
                             Authenticate
+                        </Button>
+                    </Box>
+                )}
+                {!shared && componentCredential && componentCredential.name && componentCredential.name.includes('figmaApi') && (
+                    <Box sx={{ p: 2 }}>
+                        <Button variant='contained' color='secondary' onClick={() => setOAuth2()}>
+                            Connect to Figma
                         </Button>
                     </Box>
                 )}
