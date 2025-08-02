@@ -221,11 +221,12 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             // Custom logic for figmaAPI
             if (componentCredential.name && componentCredential.name.includes('figmaApi')) {
                 // Set default values for Figma OAuth2
+                const currentHost = `${window.location.protocol}//${window.location.host}`
                 finalCredentialData = {
                     ...finalCredentialData,
                     authorizationUrl: 'https://www.figma.com/oauth',
                     accessTokenUrl: 'https://www.figma.com/api/oauth/token',
-                    redirect_uri: 'https://beta.buildnuggets.ai/api/v1/oauth2-credential/callback',
+                    redirect_uri: `${currentHost}/api/v1/oauth2-credential/callback`,
                     scope: 'file_read',
                     response_type: 'code',
                     response_mode: 'query',
