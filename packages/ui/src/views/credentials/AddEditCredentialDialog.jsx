@@ -6,7 +6,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import parser from 'html-react-parser'
 
 // Material
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography, Chip } from '@mui/material'
 
 // Project imports
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -218,20 +218,81 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             let credentialId = null
             let finalCredentialData = { ...credentialData }
 
+            // Get current host dynamically
+            const currentHost = `${window.location.protocol}//${window.location.host}`
+
             // Custom logic for figmaAPI
             if (componentCredential.name && componentCredential.name.includes('figmaApi')) {
                 // Set default values for Figma OAuth2
-                const currentHost = `${window.location.protocol}//${window.location.host}`
                 finalCredentialData = {
                     ...finalCredentialData,
                     authorizationUrl: 'https://www.figma.com/oauth',
-                    accessTokenUrl: 'https://www.figma.com/api/oauth/token',
+                    accessTokenUrl: 'https://api.figma.com/v1/oauth/token',
                     redirect_uri: `${currentHost}/api/v1/oauth2-credential/callback`,
                     scope: 'file_read',
                     response_type: 'code',
                     response_mode: 'query',
                     additionalParameters: '',
                     clientId: 'D0ZHbUhqtbVQ727cnKaWgK'
+                }
+            }
+
+            // Custom logic for Notion API
+            if (componentCredential.name && componentCredential.name.includes('notionApi')) {
+                // Set default values for Notion OAuth2
+                finalCredentialData = {
+                    ...finalCredentialData,
+                    authorizationUrl: 'https://api.notion.com/v1/oauth/authorize',
+                    accessTokenUrl: 'https://api.notion.com/v1/oauth/token',
+                    redirect_uri: `${currentHost}/api/v1/oauth2-credential/callback`,
+                    response_type: 'code',
+                    response_mode: 'query',
+                    additionalParameters: '',
+                    clientId: '242d872b-594c-8095-bb32-00374ab0bb2b'
+                }
+            }
+
+            if (componentCredential.name && componentCredential.name.includes('slackApi')) {
+                finalCredentialData = {
+                    ...finalCredentialData,
+                    authorizationUrl: 'https://slack.com/oauth/v2/authorize',
+                    accessTokenUrl: 'https://slack.com/api/oauth.v2.access',
+                    redirect_uri: `${currentHost}/api/v1/oauth2-credential/callback`,
+                    scope: 'chat:write channels:read users:read',
+                    response_type: 'code',
+                    response_mode: 'query',
+                    additionalParameters: '',
+                    clientId: '9287757523622'
+                }
+            }
+
+            const googleServices = [
+                'googleCalendarOAuth2',
+                'googleSheetsOAuth2', 
+                'googleDocsOAuth2',
+                'gmailOAuth2',
+                'googleDriveOAuth2'
+            ]
+
+            if (componentCredential.name && googleServices.includes(componentCredential.name)) {
+                const googleScopes = {
+                    googleCalendarOAuth2: 'https://www.googleapis.com/auth/calendar',
+                    googleSheetsOAuth2: 'https://www.googleapis.com/auth/spreadsheets',
+                    googleDocsOAuth2: 'https://www.googleapis.com/auth/documents',
+                    gmailOAuth2: 'https://www.googleapis.com/auth/gmail.readonly',
+                    googleDriveOAuth2: 'https://www.googleapis.com/auth/drive.file'
+                }
+
+                finalCredentialData = {
+                    ...finalCredentialData,
+                    authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+                    accessTokenUrl: 'https://oauth2.googleapis.com/token',
+                    redirect_uri: `${currentHost}/api/v1/oauth2-credential/callback`,
+                    scope: googleScopes[componentCredential.name] || 'https://www.googleapis.com/auth/drive.file',
+                    response_type: 'code',
+                    response_mode: 'query',
+                    additionalParameters: 'access_type=offline&prompt=consent',
+                    clientId: '646950814936-sjel4jdrnuill3bq2np0au8iu3243cb7.apps.googleusercontent.com'
                 }
             }
 
@@ -322,7 +383,6 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                             })
                         }
 
-                        // Close the auth window if it's still open
                         if (authWindow && !authWindow.closed) {
                             authWindow.close()
                         }
@@ -372,6 +432,97 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 }
             })
         }
+    }
+
+    const getOAuthButtonText = (credentialName) => {
+        const buttonTexts = {
+            // Google Services
+            googleCalendarOAuth2: 'Connect to Google Calendar',
+            googleSheetsOAuth2: 'Connect to Google Sheets',
+            googleDocsOAuth2: 'Connect to Google Docs',
+            gmailOAuth2: 'Connect to Gmail',
+            googleDriveOAuth2: 'Connect to Google Drive',
+            figmaApi: 'Connect to Figma',
+            notionApi: 'Connect to Notion',
+            slackApi: 'Connect to Slack',
+            default: 'Authenticate'
+        }
+        
+        return buttonTexts[credentialName] || buttonTexts.default
+    }
+
+    const isOAuthService = (credentialName) => {
+        const oauthServices = [
+            'googleCalendarOAuth2',
+            'googleSheetsOAuth2',
+            'googleDocsOAuth2', 
+            'gmailOAuth2',
+            'googleDriveOAuth2',
+            'figmaApi',
+            'slackApi',
+            'notionApi'
+        ]
+        
+        return oauthServices.includes(credentialName) || credentialName.includes('OAuth2')
+    }
+
+    const getOAuth2StatusBadge = (credentialName, data) => {
+        if (!data || dialogProps.type === 'ADD') return null
+
+        let isConnected = false
+        let statusText = 'Not Connected'
+        let statusColor = 'default'
+
+        // Check connection status based on credential type
+        if (credentialName === 'slackApi') {
+            isConnected = !!(data.botToken && data.teamId)
+            if (isConnected) {
+                statusText = data.team_name ? `Connected to ${data.team_name}` : 'Connected to Slack'
+                statusColor = 'success'
+            }
+        } else if (credentialName === 'notionApi') {
+            isConnected = !!(data.access_token)
+            if (isConnected) {
+                statusText = data.workspace_name ? `Connected to ${data.workspace_name}` : 'Connected to Notion'
+                statusColor = 'success'
+            }
+        } else if (credentialName === 'figmaApi') {
+            isConnected = !!(data.access_token)
+            if (isConnected) {
+                statusText = 'Connected to Figma'
+                statusColor = 'success'
+            }
+        } else if (credentialName.includes('google')) {
+            isConnected = !!(data.access_token)
+            if (isConnected) {
+                statusText = 'Connected to Google'
+                statusColor = 'success'
+            }
+        } else if (credentialName.includes('OAuth2')) {
+            isConnected = !!(data.access_token)
+            if (isConnected) {
+                statusText = 'Connected'
+                statusColor = 'success'
+            }
+        }
+
+        // Check if token is expired
+        if (isConnected && data.expires_at) {
+            const isExpired = new Date(data.expires_at) < new Date()
+            if (isExpired) {
+                statusText = 'Token Expired'
+                statusColor = 'error'
+            }
+        }
+
+        return (
+            <Chip
+                label={statusText}
+                color={statusColor}
+                size="small"
+                variant={isConnected ? 'filled' : 'outlined'}
+            />
+        )
     }
 
     const component = show ? (
@@ -478,7 +629,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                     </Box>
                 )}
                 {!shared && componentCredential && componentCredential.name && componentCredential.name.includes('OAuth2') && (
-                    <Box sx={{ p: 2 }}>
+                    <Box sx={{ p: 2, display: 'none' }}>
                         <Stack sx={{ position: 'relative' }} direction='row'>
                             <Typography variant='overline'>OAuth Redirect URL</Typography>
                         </Stack>
@@ -498,17 +649,20 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                         .filter((inputParam) => inputParam.hidden !== true)
                         .map((inputParam, index) => <CredentialInputHandler key={index} inputParam={inputParam} data={credentialData} />)}
 
-                {!shared && componentCredential && componentCredential.name && componentCredential.name.includes('OAuth2') && (
-                    <Box sx={{ p: 2 }}>
+                {!shared && componentCredential && componentCredential.name && isOAuthService(componentCredential.name) && (
+                    <Box sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {dialogProps.type === 'EDIT' && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant='overline' sx={{ display: 'block', mb: 1 }}>
+                                    Connection Status
+                                </Typography>
+                                {getOAuth2StatusBadge(componentCredential.name, credentialData)}
+                            </Box>
+                        )}
+                        
+                        {/* OAuth2 Button */}
                         <Button variant='contained' color='secondary' onClick={() => setOAuth2()}>
-                            Authenticate
-                        </Button>
-                    </Box>
-                )}
-                {!shared && componentCredential && componentCredential.name && componentCredential.name.includes('figmaApi') && (
-                    <Box sx={{ p: 2 }}>
-                        <Button variant='contained' color='secondary' onClick={() => setOAuth2()}>
-                            Connect to Figma
+                            {getOAuthButtonText(componentCredential.name)}
                         </Button>
                     </Box>
                 )}

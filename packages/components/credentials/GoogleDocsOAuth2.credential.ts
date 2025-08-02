@@ -18,44 +18,7 @@ class GoogleDocsOAuth2 implements INodeCredential {
         this.version = 1.0
         this.description =
             'Google Docs OAuth2 credentials for accessing Google Docs API'
-        this.inputs = [
-            {
-                label: 'Authorization URL',
-                name: 'authorizationUrl',
-                type: 'string',
-                default: 'https://accounts.google.com/o/oauth2/v2/auth'
-            },
-            {
-                label: 'Access Token URL',
-                name: 'accessTokenUrl',
-                type: 'string',
-                default: 'https://oauth2.googleapis.com/token'
-            },
-            {
-                label: 'Client ID',
-                name: 'clientId',
-                type: 'string'
-            },
-            {
-                label: 'Client Secret',
-                name: 'clientSecret',
-                type: 'password'
-            },
-            {
-                label: 'Additional Parameters',
-                name: 'additionalParameters',
-                type: 'string',
-                default: 'access_type=offline&prompt=consent',
-                hidden: true
-            },
-            {
-                label: 'Scope',
-                name: 'scope',
-                type: 'string',
-                hidden: true,
-                default: scopes.join(' ')
-            }
-        ]
+        this.inputs = []
     }
 }
 
