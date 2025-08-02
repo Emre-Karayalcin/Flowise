@@ -224,7 +224,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 finalCredentialData = {
                     ...finalCredentialData,
                     authorizationUrl: 'https://www.figma.com/oauth',
-                    tokenUrl: 'https://www.figma.com/api/oauth/token',
+                    accessTokenUrl: 'https://www.figma.com/api/oauth/token',
                     redirect_uri: 'https://beta.buildnuggets.ai/api/v1/oauth2-credential/callback',
                     scope: 'file_read',
                     response_type: 'code',

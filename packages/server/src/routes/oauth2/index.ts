@@ -197,7 +197,12 @@ router.get('/callback', async (req: Request, res: Response) => {
 
         const decryptedData = await decryptCredentialData(credential.encryptedData)
 
-        const { clientId, clientSecret, accessTokenUrl, redirect_uri, scope } = decryptedData
+        let { clientId, clientSecret, accessTokenUrl, redirect_uri, scope } = decryptedData
+        
+        if (credential.credentialName === 'figmaApi') {
+            accessTokenUrl = accessTokenUrl || 'https://www.figma.com/api/oauth/token'
+            scope = scope || 'file_read'
+        }
 
         if (!clientId || !clientSecret) {
             const errorHtml = generateErrorPage(
@@ -249,13 +254,33 @@ router.get('/callback', async (req: Request, res: Response) => {
         // Update the credential data with token information
         const updatedCredentialData: any = {
             ...decryptedData,
-            ...tokenData,
+            access_token: tokenData.access_token,
+            token_type: tokenData.token_type || 'bearer',
             token_received_at: new Date().toISOString()
         }
 
-        // Add refresh token if provided
-        if (tokenData.refresh_token) {
-            updatedCredentialData.refresh_token = tokenData.refresh_token
+        if (credential.credentialName === 'figmaApi') {
+            if (tokenData.expires_in) {
+                updatedCredentialData.expires_in = tokenData.expires_in
+            }
+            if (tokenData.scope) {
+                updatedCredentialData.granted_scope = tokenData.scope
+            }
+            if (tokenData.refresh_token) {
+                updatedCredentialData.refresh_token = tokenData.refresh_token
+            }
+        } else {
+            if (tokenData.expires_in) {
+                updatedCredentialData.expires_in = tokenData.expires_in
+            }
+            if (tokenData.refresh_token) {
+                updatedCredentialData.refresh_token = tokenData.refresh_token
+            }
+            Object.keys(tokenData).forEach(key => {
+                if (!updatedCredentialData.hasOwnProperty(key)) {
+                    updatedCredentialData[key] = tokenData[key]
+                }
+            })
         }
 
         // Calculate token expiry time
@@ -324,7 +349,12 @@ router.post('/refresh/:credentialId', async (req: Request, res: Response, next: 
 
         const decryptedData = await decryptCredentialData(credential.encryptedData)
 
-        const { clientId, clientSecret, refresh_token, accessTokenUrl, scope } = decryptedData
+        let { clientId, clientSecret, refresh_token, accessTokenUrl, scope } = decryptedData
+
+        if (credential.credentialName === 'figmaApi') {
+            accessTokenUrl = accessTokenUrl || 'https://www.figma.com/api/oauth/token'
+            scope = scope || 'file_read'
+        }
 
         if (!clientId || !clientSecret || !refresh_token) {
             return res.status(400).json({
@@ -365,13 +395,33 @@ router.post('/refresh/:credentialId', async (req: Request, res: Response, next: 
         // Update the credential data with new token information
         const updatedCredentialData: any = {
             ...decryptedData,
-            ...tokenData,
+            access_token: tokenData.access_token,
+            token_type: tokenData.token_type || 'bearer',
             token_received_at: new Date().toISOString()
         }
 
-        // Update refresh token if a new one was provided
-        if (tokenData.refresh_token) {
-            updatedCredentialData.refresh_token = tokenData.refresh_token
+        if (credential.credentialName === 'figmaApi') {
+            if (tokenData.expires_in) {
+                updatedCredentialData.expires_in = tokenData.expires_in
+            }
+            if (tokenData.refresh_token) {
+                updatedCredentialData.refresh_token = tokenData.refresh_token
+            }
+            if (tokenData.scope) {
+                updatedCredentialData.granted_scope = tokenData.scope
+            }
+        } else {
+            if (tokenData.expires_in) {
+                updatedCredentialData.expires_in = tokenData.expires_in
+            }
+            if (tokenData.refresh_token) {
+                updatedCredentialData.refresh_token = tokenData.refresh_token
+            }
+            Object.keys(tokenData).forEach(key => {
+                if (!updatedCredentialData.hasOwnProperty(key)) {
+                    updatedCredentialData[key] = tokenData[key]
+                }
+            })
         }
 
         // Calculate token expiry time
@@ -395,7 +445,9 @@ router.post('/refresh/:credentialId', async (req: Request, res: Response, next: 
             message: 'OAuth2 token refreshed successfully',
             credentialId: credential.id,
             tokenInfo: {
-                ...tokenData,
+                access_token: tokenData.access_token,
+                token_type: tokenData.token_type,
+                expires_in: tokenData.expires_in,
                 has_new_refresh_token: !!tokenData.refresh_token,
                 expires_at: updatedCredentialData.expires_at
             }
