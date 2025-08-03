@@ -375,6 +375,38 @@ router.get('/callback', async (req: Request, res: Response) => {
         const defaultRedirectUri = `${req.protocol}://${req.get('host')}/api/v1/oauth2-credential/callback`
         const finalRedirectUri = redirect_uri || defaultRedirectUri
 
+        console.log('Making token exchange request...')
+        console.log('Token URL:', tokenUrl)
+        console.log('Credential type:', credential.credentialName)
+
+        let tokenResponse
+
+        // Special handling for Notion API - uses JSON payload and Basic Auth
+        if (credential.credentialName === 'notionApi') {
+            if (!clientSecret) {
+                console.error('[Notion OAuth] clientSecret missing, cannot proceed refresh');
+                return res.status(400).json({
+                    success: false,
+                    message: 'Notion OAuth requires client secret for token refresh'
+                })
+            }
+
+            const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+            const payload = {
+                grant_type: 'authorization_code',
+                code: code as string,
+                redirect_uri: finalRedirectUri
+            }
+
+            tokenResponse = await axios.post(tokenUrl, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Basic ${basicAuth}`,
+                    'Notion-Version': '2022-06-28'
+                }
+            })
+        } else {
             const tokenRequestData: any = {
                 client_id: clientId,
                 client_secret: clientSecret,
@@ -387,11 +419,28 @@ router.get('/callback', async (req: Request, res: Response) => {
                 tokenRequestData.scope = scope
             }
 
-        const tokenResponse = await axios.post(tokenUrl, new URLSearchParams(tokenRequestData).toString(), {
+            console.log('Token request data:', {
+                ...tokenRequestData,
+                client_secret: '***HIDDEN***',
+                code: tokenRequestData.code.substring(0, 20) + '...'
+            })
+
+            tokenResponse = await axios.post(tokenUrl, new URLSearchParams(tokenRequestData).toString(), {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     Accept: 'application/json'
                 }
+            })
+        }
+
+        console.log('Token response received')
+        console.log('Response status:', tokenResponse.status)
+        console.log('Response headers:', tokenResponse.headers)
+        console.log('Token data keys:', Object.keys(tokenResponse.data))
+        console.log('Token data (masked):', {
+            ...tokenResponse.data,
+            access_token: tokenResponse.data.access_token ? tokenResponse.data.access_token.substring(0, 20) + '...' : 'MISSING',
+            refresh_token: tokenResponse.data.refresh_token ? tokenResponse.data.refresh_token.substring(0, 20) + '...' : 'MISSING'
         })
 
         const tokenData = tokenResponse.data

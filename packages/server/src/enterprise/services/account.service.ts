@@ -236,11 +236,31 @@ export class AccountService {
                     createdBy: createdById
                 }
                 data.organizationUser = await this.organizationUserService.createOrganizationUser(organizationUserPayload)
-                data.workspace.name = WorkspaceName.DEFAULT_PERSONAL_WORKSPACE
-                data.workspace.createdBy = createdById
+                
+                data.workspace = await this.workspaceService.upsertMemberWorkspace(assignedOrganization.id, createdById, queryRunner)
+
+                if (createdById && data.workspace.id) {
+                    const existingOwnerWorkspaceUser = await this.workspaceUserService.readWorkspaceUserByWorkspaceIdUserId(
+                        data.workspace.id, 
+                        createdById, 
+                        queryRunner
+                    )
+
+                    if (!existingOwnerWorkspaceUser.workspaceUser) {
+                        const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
+                        const ownerWorkspaceUserPayload = {
+                            workspaceId: data.workspace.id,
+                            userId: createdById,
+                            roleId: ownerRole.id,
+                            status: WorkspaceUserStatus.ACTIVE,
+                            createdBy: createdById
+                        }
+                        await this.workspaceUserService.createWorkspaceUser(ownerWorkspaceUserPayload)
+                    }
+                }
                 data.workspaceUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
                 data.workspaceUser.createdBy = createdById
-
+                
                 break
             }
             default:
@@ -255,9 +275,13 @@ export class AccountService {
         data.organizationUser.userId = data.user.id
         data.organizationUser.createdBy = data.user.createdBy
         data.organizationUser = this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
-        data.workspace.organizationId = data.organization.id
-        data.workspace.createdBy = data.user.createdBy
-        data.workspace = this.workspaceService.createNewWorkspace(data.workspace, queryRunner, true)
+
+        if (!data.workspace.id) {
+            data.workspace.organizationId = data.organization.id
+            data.workspace.createdBy = data.user.createdBy
+            data.workspace = this.workspaceService.createNewWorkspace(data.workspace, queryRunner, true)
+        }
+
         data.workspaceUser.workspaceId = data.workspace.id
         data.workspaceUser.userId = data.user.id
         data.workspaceUser.createdBy = data.user.createdBy

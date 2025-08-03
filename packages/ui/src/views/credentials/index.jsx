@@ -390,7 +390,6 @@ const Credentials = () => {
                                                                 <StyledTableCell>
                                                                     <PermissionIconButton
                                                                         permissionId={'credentials:share'}
-                                                                        display={'feat:workspaces'}
                                                                         title='Share'
                                                                         color='primary'
                                                                         onClick={() => share(credential)}

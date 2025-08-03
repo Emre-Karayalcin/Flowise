@@ -56,6 +56,55 @@ export class WorkspaceService {
         if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.INVALID_WORKSPACE_ID)
     }
 
+    public async readWorkspaceByCreatedBy(createdById: string, queryRunner?: QueryRunner): Promise<Workspace | null> {
+        const repository = queryRunner ? queryRunner.manager.getRepository(Workspace) : this.dataSource.getRepository(Workspace)
+        
+        const workspace = await repository.findOne({
+            where: { createdBy: createdById },
+            order: { createdDate: 'ASC' }
+        })
+        
+        return workspace
+    }
+
+    public async upsertMemberWorkspace(organizationId: string, createdById?: string, queryRunner?: QueryRunner): Promise<Workspace> {
+        const repository = queryRunner ? queryRunner.manager.getRepository(Workspace) : this.dataSource.getRepository(Workspace)
+        
+        let memberWorkspace = await repository.findOne({
+            where: { 
+                name: 'Member Workspace',
+                organizationId: organizationId
+            }
+        })
+        
+        if (!memberWorkspace) {
+            memberWorkspace = new Workspace()
+            memberWorkspace.name = 'Member Workspace'
+            memberWorkspace.organizationId = organizationId
+            memberWorkspace.createdBy = createdById
+            memberWorkspace.createdDate = new Date()
+            
+            if (!queryRunner) {
+                memberWorkspace = await repository.save(memberWorkspace)
+            }
+        }
+        
+        return memberWorkspace
+    }
+
+    public async readWorkspaceUserByWorkspaceIdUserId(workspaceId: string, userId: string, queryRunner?: QueryRunner): Promise<WorkspaceUser | null> {
+        const repository = queryRunner ? queryRunner.manager.getRepository(WorkspaceUser) : this.dataSource.getRepository(WorkspaceUser)
+        
+        const workspaceUser = await repository.findOne({
+            where: { 
+                workspaceId: workspaceId,
+                userId: userId
+            }
+        })
+        
+        return workspaceUser
+    }
+
     public async readWorkspaceById(id: string | undefined, queryRunner: QueryRunner) {
         this.validateWorkspaceId(id)
         return await queryRunner.manager.findOneBy(Workspace, { id })
@@ -78,7 +127,13 @@ export class WorkspaceService {
         const filteredWorkspaces = await Promise.all(
             workspaces.map(async (workspace) => {
                 const workspaceUsers = await queryRunner.manager.findBy(WorkspaceUser, { workspaceId: workspace.id })
-
+                
+                if (workspace.name === 'Member Workspace') {
+                    return {
+                        ...workspace,
+                        userCount: workspaceUsers.length
+                    } as Workspace & { userCount: number }
+                }
                 // Skip if any user in the workspace has PERSONAL_WORKSPACE role
                 const hasPersonalWorkspaceUser = workspaceUsers.some((user) => user.roleId === rolePersonalWorkspace.id)
                 if (hasPersonalWorkspaceUser) {

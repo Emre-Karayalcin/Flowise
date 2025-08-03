@@ -1,17 +1,16 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { cloneDeep } from 'lodash'
 
 // Material
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography, FormControlLabel, Checkbox, List, ListItem, Paper } from '@mui/material'
 
 // Project imports
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
-import { Grid } from '@/ui-component/grid/Grid'
 
 // Icons
 import { IconX, IconShare } from '@tabler/icons-react'
@@ -48,26 +47,24 @@ const ShareWithWorkspaceDialog = ({ show, dialogProps, onCancel, setError }) => 
 
     const [name, setName] = useState('')
 
-    const onRowUpdate = (newRow) => {
-        setTimeout(() => {
-            setOutputSchema((prevRows) => {
-                let allRows = [...cloneDeep(prevRows)]
-                const indexToUpdate = allRows.findIndex((row) => row.id === newRow.id)
-                if (indexToUpdate >= 0) {
-                    allRows[indexToUpdate] = { ...newRow }
+    const onWorkspaceToggle = (workspaceId, isShared) => {
+        console.log('onWorkspaceToggle called:', { workspaceId, isShared })
+
+        setOutputSchema((prevRows) => {
+            const allRows = [...cloneDeep(prevRows)]
+            const indexToUpdate = allRows.findIndex((row) => row.id === workspaceId)
+
+            if (indexToUpdate >= 0) {
+                allRows[indexToUpdate] = {
+                    ...allRows[indexToUpdate],
+                    shared: isShared
                 }
-                return allRows
-            })
+                console.log('Updated workspace:', allRows[indexToUpdate])
+            }
+
+            return allRows
         })
     }
-
-    const columns = useMemo(
-        () => [
-            { field: 'workspaceName', headerName: 'Workspace', editable: false, flex: 1 },
-            { field: 'shared', headerName: 'Share', type: 'boolean', editable: true, width: 180 }
-        ],
-        []
-    )
 
     useEffect(() => {
         if (getSharedWorkspacesForItemApi.data) {
@@ -137,6 +134,7 @@ const ShareWithWorkspaceDialog = ({ show, dialogProps, onCancel, setError }) => 
                 itemType: dialogProps.data.itemType,
                 workspaceIds: []
             }
+            console.log('outputSchema', outputSchema)
             outputSchema.map((row) => {
                 if (row.shared) {
                     obj.workspaceIds.push(row.id)
@@ -179,6 +177,33 @@ const ShareWithWorkspaceDialog = ({ show, dialogProps, onCancel, setError }) => 
         }
     }
 
+    const WorkspaceCheckboxList = ({ workspaces, onWorkspaceToggle }) => {
+        return (
+            <Paper variant="outlined" sx={{ maxHeight: 300, overflow: 'auto' }}>
+                <List dense>
+                    {workspaces.map((workspace) => (
+                        <ListItem key={workspace.id} sx={{ py: 0.5 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={workspace.shared || false}
+                                        onChange={(e) => {
+                                            console.log('Checkbox toggled for workspace:', workspace.workspaceName, 'checked:', e.target.checked)
+                                            onWorkspaceToggle(workspace.id, e.target.checked)
+                                        }}
+                                        color="primary"
+                                    />
+                                }
+                                label={workspace.workspaceName}
+                                sx={{ width: '100%' }}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
+            </Paper>
+        )
+    }
+
     const component = show ? (
         <Dialog
             fullWidth
@@ -202,7 +227,13 @@ const ShareWithWorkspaceDialog = ({ show, dialogProps, onCancel, setError }) => 
                     <OutlinedInput id='name' type='string' disabled={true} fullWidth placeholder={name} value={name} name='name' />
                 </Box>
                 <Box sx={{ p: 2 }}>
-                    <Grid columns={columns} rows={outputSchema} onRowUpdate={onRowUpdate} />
+                    <Stack sx={{ position: 'relative', mb: 2 }} direction='row'>
+                        <Typography variant='overline'>Select Workspaces to Share</Typography>
+                    </Stack>
+                    <WorkspaceCheckboxList
+                        workspaces={outputSchema}
+                        onWorkspaceToggle={onWorkspaceToggle}
+                    />
                 </Box>
             </DialogContent>
             <DialogActions>
