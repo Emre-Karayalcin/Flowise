@@ -5,9 +5,52 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 import { getWorkspaceSearchOptionsFromReq } from '../../enterprise/utils/ControllerServiceUtils'
 
+const getAllowedToolNames = () => [
+    'customTool',
+    'gmail',
+    'googleCalendarTool',
+    'googleDocsTool',
+    'googleDriveTool',
+    'googleCustomSearch',
+    'googleSheetsTool',
+    'readFile',
+    'requestsDelete',
+    'requestsGet',
+    'requestsPost',
+    'requestsPut',
+    'writeFile'
+]
+
+const getAllowedToolMCPNames = () => ['slackMCP']
+
+const getAllowedLLMSNames = () => ['openAI']
+
+const getAllowedChatModelNames = () => ['chatOpenAI', 'chatOpenAICustom']
+
+const filterToolsByCategory = (nodes: any[]) => {
+    const allowedNames = getAllowedToolNames()
+    const allowedMCPNames = getAllowedToolMCPNames()
+    return nodes.filter((node) => {
+        if (node.category === 'Tools') {
+            return allowedNames.includes(node.name)
+        }
+        if (node.category === 'Tools (MCP)') {
+            return allowedMCPNames.includes(node.name)
+        }
+        if (node.category === 'LLMs') {
+            return getAllowedLLMSNames().includes(node.name)
+        }
+        if (node.category === 'Chat Models') {
+            return getAllowedChatModelNames().includes(node.name)
+        }
+        return true
+    })
+}
+
 const getAllNodes = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await nodesService.getAllNodes()
+        let apiResponse = await nodesService.getAllNodes()
+        apiResponse = filterToolsByCategory(apiResponse)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -69,8 +112,46 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
             )
         }
         const body = req.body
+        const loadMethod = body.loadMethod || 'listTools'
+        console.log("loadMethod", loadMethod)
+
         body.searchOptions = getWorkspaceSearchOptionsFromReq(req)
         const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, body)
+        if (loadMethod === 'listTools') {
+            const allowedToolNames = [
+                'customTool',
+                'gmail',
+                'googleCalendarTool',
+                'googleDocsTool',
+                'googleDriveTool',
+                'googleCustomSearch',
+                'googleSheetsTool',
+                'slackMCP',
+                'readFile',
+                'requestsDelete',
+                'requestsGet',
+                'requestsPost',
+                'requestsPut',
+                'writeFile'
+            ]
+
+            console.log("apiResponse Tools")
+
+            const filteredResponse = apiResponse.filter((tool: any) => allowedToolNames.includes(tool.name))
+            console.log("Filtering Tools - filtered count:", filteredResponse.length)
+
+            return res.json(filteredResponse)
+        }
+        
+        if (loadMethod === 'listModels') {
+            const allowedModelNames = ['chatOpenAI', 'chatOpenAICustom']
+            console.log("apiResponse Models")
+            const filteredResponse = apiResponse.filter((tool: any) => allowedModelNames.includes(tool.name))
+            console.log("Filtering Models - filtered count:", filteredResponse.length)
+
+            return res.json(filteredResponse)
+        }
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
