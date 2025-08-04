@@ -19,7 +19,7 @@
                 "hideInput": true,
                 "baseClasses": ["Start"],
                 "category": "Agent Flows",
-                "description": "Starting point of the agents
+                "description": "Starting point of the agents",
                 "inputParams": [
                     {
                         "label": "Input Type",
