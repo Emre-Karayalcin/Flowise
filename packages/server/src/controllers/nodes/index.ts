@@ -131,45 +131,46 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
         }
         const body = req.body
         const loadMethod = body.loadMethod || 'listTools'
-        console.log('loadMethod', loadMethod)
-
+        const nameType = body.name
         body.searchOptions = getWorkspaceSearchOptionsFromReq(req)
         const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, body)
-        if (loadMethod === 'listTools') {
-            const allowedToolNames = [
-                'customTool',
-                'gmail',
-                'googleCalendarTool',
-                'googleDocsTool',
-                'googleDriveTool',
-                'googleCustomSearch',
-                'googleSheetsTool',
-                'slackMCP',
-                'readFile',
-                'requestsDelete',
-                'requestsGet',
-                'requestsPost',
-                'requestsPut',
-                'writeFile'
-            ]
+        if (nameType.includes('Agentflow')) {
+            if (loadMethod === 'listTools') {
+                const allowedToolNames = [
+                    'customTool',
+                    'gmail',
+                    'googleCalendarTool',
+                    'googleDocsTool',
+                    'googleDriveTool',
+                    'googleCustomSearch',
+                    'googleSheetsTool',
+                    'slackMCP',
+                    'readFile',
+                    'requestsDelete',
+                    'requestsGet',
+                    'requestsPost',
+                    'requestsPut',
+                    'writeFile'
+                ]
 
-            const filteredResponse = apiResponse.filter((tool: any) => allowedToolNames.includes(tool.name))
-            return res.json(filteredResponse)
-        }
+                const filteredResponse = apiResponse.filter((tool: any) => allowedToolNames.includes(tool.name))
+                return res.json(filteredResponse)
+            }
 
-        if (loadMethod === 'listModels') {
-            const allowedModelNames = [
-                'chatOpenAI',
-                'chatOpenAICustom',
-                'chatAnthropic',
-                'chatGoogleGenerativeAI',
-                'chatDeepseek',
-                'groqChat',
-                'chatPerplexity'
-            ]
-            const filteredResponse = apiResponse.filter((tool: any) => allowedModelNames.includes(tool.name))
+            if (loadMethod === 'listModels') {
+                const allowedModelNames = [
+                    'chatOpenAI',
+                    'chatOpenAICustom',
+                    'chatAnthropic',
+                    'chatGoogleGenerativeAI',
+                    'chatDeepseek',
+                    'groqChat',
+                    'chatPerplexity'
+                ]
+                const filteredResponse = apiResponse.filter((tool: any) => allowedModelNames.includes(tool.name))
 
-            return res.json(filteredResponse)
+                return res.json(filteredResponse)
+            }
         }
 
         return res.json(apiResponse)
