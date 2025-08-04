@@ -80,10 +80,26 @@ const updateCredential = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+const shareCredentialToAllPersonalWorkspaces = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (typeof req.params === 'undefined' || !req.params.id) {
+            throw new InternalFlowiseError(
+                StatusCodes.PRECONDITION_FAILED,
+                `Error: credentialsController.shareCredentialToAllPersonalWorkspaces - id not provided!`
+            )
+        }
+        const apiResponse = await credentialsService.shareCredentialToAllPersonalWorkspaces(req.params.id)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
     createCredential,
     deleteCredentials,
     getAllCredentials,
     getCredentialById,
-    updateCredential
+    updateCredential,
+    shareCredentialToAllPersonalWorkspaces
 }

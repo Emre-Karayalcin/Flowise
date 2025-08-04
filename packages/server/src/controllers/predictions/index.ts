@@ -9,6 +9,59 @@ import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { v4 as uuidv4 } from 'uuid'
 import { getErrorMessage } from '../../errors/utils'
 import { MODE } from '../../Interface'
+import { ChatFlow } from '../../database/entities/ChatFlow'
+import { WorkspaceUser } from '../../enterprise/database/entities/workspace-user.entity'
+
+const checkWorkspaceUserCredits = async (chatflowId: string): Promise<void> => {
+    try {
+        const appDataSource = getRunningExpressApp().AppDataSource
+        
+        const chatflow = await appDataSource.getRepository(ChatFlow).findOneBy({
+            id: chatflowId
+        })
+        
+        if (!chatflow || !chatflow.workspaceId) {
+            throw new InternalFlowiseError(
+                StatusCodes.NOT_FOUND,
+                'Chatflow or workspace not found'
+            )
+        }
+        
+        const workspaceUser = await appDataSource
+            .getRepository(WorkspaceUser)
+            .createQueryBuilder('wu')
+            .leftJoinAndSelect('wu.user', 'user')
+            .where('wu.workspaceId = :workspaceId', { workspaceId: chatflow.workspaceId })
+            .orderBy('wu.createdDate', 'ASC')
+            .getOne()
+            
+        if (!workspaceUser || !workspaceUser.user) {
+            throw new InternalFlowiseError(
+                StatusCodes.NOT_FOUND,
+                'No user found in workspace'
+            )
+        }
+        
+        const userCredits = workspaceUser.user.credits || 0
+        const requiredCredits = 10
+        
+        if (userCredits < requiredCredits) {
+            throw new InternalFlowiseError(
+                StatusCodes.INTERNAL_SERVER_ERROR,
+                `Insufficient credits. Required: ${requiredCredits}, Available: ${userCredits}. Please contact your administrator to top up your credits.`
+            )
+        }
+        
+    } catch (error) {
+        if (error instanceof InternalFlowiseError) {
+            throw error
+        }
+        throw new InternalFlowiseError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            `Error checking user credits: ${getErrorMessage(error)}`
+        )
+    }
+}
 
 // Send input message and get prediction result (External)
 const createPrediction = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,6 +72,18 @@ const createPrediction = async (req: Request, res: Response, next: NextFunction)
                 `Error: predictionsController.createPrediction - id not provided!`
             )
         }
+
+        const chatflowId = req.params.id || req.body.chatflowId
+        
+        if (!chatflowId) {
+            throw new InternalFlowiseError(
+                StatusCodes.BAD_REQUEST,
+                'Chatflow ID is required'
+            )
+        }
+        
+        await checkWorkspaceUserCredits(chatflowId)
+        
         if (!req.body) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,

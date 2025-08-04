@@ -7,7 +7,25 @@ import { StatusCodes } from 'http-status-codes'
 const getAllTemplates = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const apiResponse = await marketplacesService.getAllTemplates()
-        return res.json(apiResponse)
+        
+        const excludedTemplateNames = [
+            'Interacting With API',
+            'SQL Agent',
+            'HuggingFace LLM Chain',
+            'SendGrid Email',
+            'Advanced Structured Output Parser',
+            'Conversational Retrieval QA Chain',
+            'List Output Parser',
+            'Query Engine',
+            'SQL DB Chain',
+            'SubQuestion Query Engine'
+        ]
+        
+        const filteredResponse = apiResponse.filter((template: any) => 
+            !excludedTemplateNames.includes(template.templateName)
+        )
+        
+        return res.json(filteredResponse)
     } catch (error) {
         next(error)
     }

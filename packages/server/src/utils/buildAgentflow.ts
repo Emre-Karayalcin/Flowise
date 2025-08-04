@@ -54,6 +54,8 @@ import { Execution } from '../database/entities/Execution'
 import { utilAddChatMessage } from './addChatMesage'
 import { CachePool } from '../CachePool'
 import { ChatMessage } from '../database/entities/ChatMessage'
+import { WorkspaceUser } from '../enterprise/database/entities/workspace-user.entity'
+import { User } from '../enterprise/database/entities/user.entity'
 import { Telemetry } from './telemetry'
 import { getWorkspaceSearchOptions } from '../enterprise/utils/ControllerServiceUtils'
 import { UsageCacheManager } from '../UsageCacheManager'
@@ -203,7 +205,54 @@ const updateExecution = async (appDataSource: DataSource, executionId: string, w
     Object.assign(updateExecution, bodyExecution)
 
     appDataSource.getRepository(Execution).merge(execution, updateExecution)
+    let state = data?.state || "";
+    if (['FINISHED', 'TERMINATED', 'STOPPED'].includes(state)) {
+        deductCreditsFromWorkspaceUsers(appDataSource, workspaceId, 10)
+            .catch(error => {
+                console.log(`Failed to deduct credits: ${getErrorMessage(error)}`)
+            })
+    }
     await appDataSource.getRepository(Execution).save(execution)
+}
+
+const deductCreditsFromWorkspaceUsers = async (
+    appDataSource: DataSource,
+    workspaceId: string,
+    creditsToDeduct: number = 10
+): Promise<void> => {
+    try {
+        const workspaceUsers = await appDataSource
+            .getRepository(WorkspaceUser)
+            .createQueryBuilder('wu')
+            .leftJoinAndSelect('wu.user', 'user')
+            .where('wu.workspaceId = :workspaceId', { workspaceId })
+            .andWhere('user.credits > 0')
+            .getMany()
+
+        if (workspaceUsers.length === 0) {
+            return
+        }
+
+        for (const workspaceUser of workspaceUsers) {
+            const user = workspaceUser.user
+            if (!user || user.credits <= 0) continue
+
+            const currentCredits = user.credits
+            const newCredits = Math.max(0, currentCredits - creditsToDeduct)
+            const actualDeducted = currentCredits - newCredits
+
+            // Update credits
+            await appDataSource
+                .getRepository(User)
+                .update(user.id, { credits: newCredits })
+
+            console.log(`💳 User ${user.id}: ${currentCredits} -> ${newCredits} (deducted: ${actualDeducted})`)
+        }
+
+    } catch (error) {
+        console.log(`❌ Error deducting credits for workspace ${workspaceId}: ${getErrorMessage(error)}`)
+        // Don't throw error to avoid breaking the main flow
+    }
 }
 
 export const resolveVariables = async (

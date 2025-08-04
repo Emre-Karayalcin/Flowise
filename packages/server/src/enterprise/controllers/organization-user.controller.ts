@@ -17,6 +17,7 @@ import { WorkspaceUser } from '../database/entities/workspace-user.entity'
 import { OrganizationUserService } from '../services/organization-user.service'
 import { RoleService } from '../services/role.service'
 import { WorkspaceService } from '../services/workspace.service'
+import { UserService } from '../services/user.service'
 
 export class OrganizationUserController {
     public async create(req: Request, res: Response, next: NextFunction) {
@@ -27,6 +28,23 @@ export class OrganizationUserController {
             await checkUsageLimit('users', subscriptionId, getRunningExpressApp().usageCacheManager, totalOrgUsers + 1)
             const newOrganizationUser = await organizationUserservice.createOrganizationUser(req.body)
             return res.status(StatusCodes.CREATED).json(newOrganizationUser)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    public async addCredit(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id, credit } = req.body
+            
+            if (!id || typeof credit !== 'number') {
+                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'User ID and credit amount are required')
+            }
+            
+            const userService = new UserService()
+            const updatedUser = await userService.addCreditToUserById(id, credit)
+            
+            return res.status(StatusCodes.OK).json(updatedUser)
         } catch (error) {
             next(error)
         }

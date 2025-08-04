@@ -8,6 +8,8 @@ const organizationUserController = new OrganizationUserController()
 
 router.get('/', organizationUserController.read)
 
+router.post('/add-credit', IdentityManager.checkFeatureByPlan('feat:users'), checkPermission('users:manage'), organizationUserController.addCredit)
+
 router.post('/', IdentityManager.checkFeatureByPlan('feat:users'), checkPermission('users:manage'), organizationUserController.create)
 
 router.put('/', IdentityManager.checkFeatureByPlan('feat:users'), checkPermission('users:manage'), organizationUserController.update)

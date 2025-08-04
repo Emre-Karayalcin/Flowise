@@ -4,6 +4,8 @@ const getAllCredentials = () => client.get('/credentials')
 
 const getCredentialsByName = (componentCredentialName) => client.get(`/credentials?credentialName=${componentCredentialName}`)
 
+const shareCredentialToAllPersonalWorkspaces = (credentialId) => client.post(`/credentials/${credentialId}/share-to-all-personal`)
+
 const getAllComponentsCredentials = () => client.get('/components-credentials')
 
 const getSpecificCredential = (id) => client.get(`/credentials/${id}`)
@@ -24,5 +26,6 @@ export default {
     getSpecificComponentCredential,
     createCredential,
     updateCredential,
-    deleteCredential
+    deleteCredential,
+    shareCredentialToAllPersonalWorkspaces
 }

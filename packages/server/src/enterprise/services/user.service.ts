@@ -49,6 +49,36 @@ export class UserService {
         return await queryRunner.manager.findOneBy(User, { id })
     }
 
+    public async addCreditToUserById(userId: string, credit: number) {
+        const queryRunner = this.dataSource.createQueryRunner()
+        await queryRunner.connect()
+        
+        try {
+            await queryRunner.startTransaction()
+            
+            const user = await this.readUserById(userId, queryRunner)
+            if (!user) {
+                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            }
+
+            if (typeof user.credits === 'undefined') {
+                user.credits = 0
+            }
+            
+            user.credits += credit
+            
+            const updatedUser = await this.saveUser(user, queryRunner)
+            
+            await queryRunner.commitTransaction()
+            return updatedUser
+        } catch (error) {
+            await queryRunner.rollbackTransaction()
+            throw error
+        } finally {
+            await queryRunner.release()
+        }
+    }
+
     public validateUserName(name: string | undefined) {
         if (isInvalidName(name)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_NAME)
     }

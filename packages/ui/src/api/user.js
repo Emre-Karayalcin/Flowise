@@ -6,6 +6,7 @@ const updateUser = (body) => client.put(`/user`, body)
 
 // organization users
 const getAllUsersByOrganizationId = (organizationId) => client.get(`/organizationuser?organizationId=${organizationId}`)
+const addCreditToUser = (id, credit) => client.post(`/organizationuser/add-credit`, { id, credit })
 const getUserByUserIdOrganizationId = (organizationId, userId) =>
     client.get(`/organizationuser?organizationId=${organizationId}&userId=${userId}`)
 const getOrganizationsByUserId = (userId) => client.get(`/organizationuser?userId=${userId}`)
@@ -55,5 +56,6 @@ export default {
     getPlanProration,
     updateSubscriptionPlan,
     getCurrentUsage,
-    deleteOrganizationUser
+    deleteOrganizationUser,
+    addCreditToUser
 }

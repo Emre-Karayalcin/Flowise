@@ -328,6 +328,7 @@ const AgentflowCanvas = () => {
                 position,
                 data: { ...initNode(nodeData, newNodeId, true), label: newNodeLabel }
             }
+            console.log('New Node:', newNode)
 
             if (nodeData.type === 'Iteration') {
                 newNode.type = 'iteration'

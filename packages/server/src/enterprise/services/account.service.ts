@@ -237,27 +237,9 @@ export class AccountService {
                 }
                 data.organizationUser = await this.organizationUserService.createOrganizationUser(organizationUserPayload)
                 
-                data.workspace = await this.workspaceService.upsertMemberWorkspace(assignedOrganization.id, createdById, queryRunner)
+                data.workspace.name = WorkspaceName.DEFAULT_PERSONAL_WORKSPACE
+                data.workspace.createdBy = createdById
 
-                if (createdById && data.workspace.id) {
-                    const existingOwnerWorkspaceUser = await this.workspaceUserService.readWorkspaceUserByWorkspaceIdUserId(
-                        data.workspace.id, 
-                        createdById, 
-                        queryRunner
-                    )
-
-                    if (!existingOwnerWorkspaceUser.workspaceUser) {
-                        const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
-                        const ownerWorkspaceUserPayload = {
-                            workspaceId: data.workspace.id,
-                            userId: createdById,
-                            roleId: ownerRole.id,
-                            status: WorkspaceUserStatus.ACTIVE,
-                            createdBy: createdById
-                        }
-                        await this.workspaceUserService.createWorkspaceUser(ownerWorkspaceUserPayload)
-                    }
-                }
                 data.workspaceUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
                 data.workspaceUser.createdBy = createdById
                 

@@ -13,6 +13,8 @@ router.get(['/', '/:id'], checkPermission('credentials:view'), credentialsContro
 // UPDATE
 router.put(['/', '/:id'], checkAnyPermission('credentials:create,credentials:update'), credentialsController.updateCredential)
 
+router.post('/:id/share-to-all-personal', checkPermission('credentials:update'), credentialsController.shareCredentialToAllPersonalWorkspaces)
+
 // DELETE
 router.delete(['/', '/:id'], checkPermission('credentials:delete'), credentialsController.deleteCredentials)
 

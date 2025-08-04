@@ -77,15 +77,6 @@ const dashboard = {
                     breadcrumbs: true,
                 },
                 {
-                    id: 'chatflows',
-                    title: 'Nuggets',
-                    type: 'item',
-                    url: '/chatflows',
-                    icon: icons.IconHierarchy,
-                    breadcrumbs: true,
-                    permission: 'chatflows:view'
-                },
-                {
                     id: 'assistants',
                     title: 'Assistants',
                     type: 'item',

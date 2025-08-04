@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import * as PropTypes from 'prop-types'
 
-// material-ui
 import {
     Button,
     Box,
@@ -19,7 +18,12 @@ import {
     Chip,
     Drawer,
     Typography,
-    CircularProgress
+    CircularProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField
 } from '@mui/material'
 
 // project imports
@@ -43,7 +47,7 @@ import useConfirm from '@/hooks/useConfirm'
 import useNotifier from '@/utils/useNotifier'
 
 // Icons
-import { IconTrash, IconEdit, IconX, IconPlus, IconUser, IconEyeOff, IconEye, IconUserStar } from '@tabler/icons-react'
+import { IconTrash, IconEdit, IconX, IconPlus, IconUser, IconEyeOff, IconEye, IconUserStar, IconCoins } from '@tabler/icons-react'
 import users_emptySVG from '@/assets/images/users_empty.svg'
 
 // store
@@ -156,7 +160,18 @@ function ShowUserRow(props) {
                     {'INACTIVE' === props.row.status.toUpperCase() && <Chip color={'error'} label={props.row.status.toUpperCase()} />}
                 </StyledTableCell>
                 <StyledTableCell sx={{ textAlign: 'center' }}>
-                    {props.row.user.credits ? props.row.user.credits : 0}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                        <span>{props.row.user.credits ? props.row.user.credits : 0}</span>
+                        <PermissionIconButton
+                            permissionId={'users:manage'}
+                            title='Add Credits'
+                            color='primary'
+                            size='small'
+                            onClick={() => props.onAddCreditClick(props.row)}
+                        >
+                            <IconCoins size={16} />
+                        </PermissionIconButton>
+                    </div>
                 </StyledTableCell>
                 <StyledTableCell>{!props.row.lastLogin ? 'Never' : moment(props.row.lastLogin).format('DD/MM/YYYY HH:mm')}</StyledTableCell>
                 <StyledTableCell>
@@ -231,6 +246,7 @@ ShowUserRow.propTypes = {
     row: PropTypes.any,
     onDeleteClick: PropTypes.func,
     onEditClick: PropTypes.func,
+    onAddCreditClick: PropTypes.func,
     open: PropTypes.bool,
     theme: PropTypes.any,
     deletingUserId: PropTypes.string
@@ -256,6 +272,10 @@ const Users = () => {
     const [users, setUsers] = useState([])
     const [search, setSearch] = useState('')
     const [deletingUserId, setDeletingUserId] = useState(null)
+    const [showTopUpDialog, setShowTopUpDialog] = useState(false)
+    const [selectedUser, setSelectedUser] = useState(null)
+    const [creditAmount, setCreditAmount] = useState('')
+    const [isAddingCredit, setIsAddingCredit] = useState(false)
 
     const { confirm } = useConfirm()
 
@@ -366,7 +386,70 @@ const Users = () => {
     const onConfirm = () => {
         setShowInviteDialog(false)
         setShowEditDialog(false)
+        setShowTopUpDialog(false)
         getAllUsersByOrganizationIdApi.request(currentUser.activeOrganizationId)
+    }
+
+    const handleAddCredit = (userRow) => {
+        setSelectedUser(userRow)
+        setCreditAmount('')
+        setShowTopUpDialog(true)
+    }
+
+    const addCreditToUser = async () => {
+        if (!selectedUser || !creditAmount || isNaN(creditAmount) || Number(creditAmount) <= 0) {
+            enqueueSnackbar({
+                message: 'Please enter a valid credit amount',
+                options: {
+                    variant: 'error'
+                }
+            })
+            return
+        }
+
+        try {
+            setIsAddingCredit(true)
+            const response = await userApi.addCreditToUser(selectedUser.user.id, Number(creditAmount))
+
+            if (response.data) {
+                enqueueSnackbar({
+                    message: `Successfully added ${creditAmount} credits to ${selectedUser.user.name || selectedUser.user.email}`,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'success',
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+
+                // Refresh user list
+                getAllUsersByOrganizationIdApi.request(currentUser.activeOrganizationId)
+                setShowTopUpDialog(false)
+                setSelectedUser(null)
+                setCreditAmount('')
+            }
+        } catch (error) {
+            enqueueSnackbar({
+                message: `Failed to add credits: ${
+                    error.response?.data?.message || error.message || 'Unknown error'
+                }`,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+        } finally {
+            setIsAddingCredit(false)
+        }
     }
 
     useEffect(() => {
@@ -499,6 +582,7 @@ const Users = () => {
                                                                     row={item}
                                                                     onDeleteClick={deleteUser}
                                                                     onEditClick={edit}
+                                                                    onAddCreditClick={handleAddCredit}
                                                                     deletingUserId={deletingUserId}
                                                                 />
                                                             ))}
@@ -531,6 +615,49 @@ const Users = () => {
                     setError={setError}
                 ></EditUserDialog>
             )}
+            <Dialog
+                open={showTopUpDialog}
+                onClose={() => setShowTopUpDialog(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>
+                    Add Credits to {selectedUser?.user?.name || selectedUser?.user?.email}
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                            Current Credits: {selectedUser?.user?.credits || 0}
+                        </Typography>
+                        <TextField
+                            autoFocus
+                            fullWidth
+                            label="Credit Amount"
+                            type="number"
+                            value={creditAmount}
+                            onChange={(e) => setCreditAmount(e.target.value)}
+                            placeholder="Enter amount to add"
+                            inputProps={{ min: 1 }}
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button
+                        onClick={() => setShowTopUpDialog(false)}
+                        disabled={isAddingCredit}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={addCreditToUser}
+                        disabled={isAddingCredit || !creditAmount || isNaN(creditAmount) || Number(creditAmount) <= 0}
+                        startIcon={isAddingCredit ? <CircularProgress size={16} /> : <IconCoins />}
+                    >
+                        {isAddingCredit ? 'Adding...' : 'Add Credits'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <ConfirmDialog />
         </>
     )

@@ -41,7 +41,7 @@ import useConfirm from '@/hooks/useConfirm'
 import useNotifier from '@/utils/useNotifier'
 
 // Icons
-import { IconTrash, IconEdit, IconX, IconPlus, IconShare } from '@tabler/icons-react'
+import { IconTrash, IconEdit, IconX, IconPlus, IconShare, IconUsers } from '@tabler/icons-react'
 import CredentialEmptySVG from '@/assets/images/credentials-img.png'
 import keySVG from '@/assets/images/key.svg'
 
@@ -152,6 +152,54 @@ const Credentials = () => {
         }
         setShareCredentialDialogProps(dialogProps)
         setShowShareCredentialDialog(true)
+    }
+
+    const shareToAllPersonal = async (credential) => {
+        const confirmPayload = {
+            title: `Share to all member`,
+            description: `Share credential "${credential.name}" to all member?`,
+            confirmButtonName: 'Share to All',
+            cancelButtonName: 'Cancel'
+        }
+        const isConfirmed = await confirm(confirmPayload)
+
+        if (isConfirmed) {
+            try {
+                const shareResp = await credentialsApi.shareCredentialToAllPersonalWorkspaces(credential.id)
+                if (shareResp.data) {
+                    enqueueSnackbar({
+                        message: `Credential shared to ${shareResp.data.newShares} new members (${shareResp.data.existingShares} already shared)`,
+                        options: {
+                            key: new Date().getTime() + Math.random(),
+                            variant: 'success',
+                            action: (key) => (
+                                <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                    <IconX />
+                                </Button>
+                            )
+                        }
+                    })
+                    // Optionally refresh the credentials list
+                    getAllCredentialsApi.request()
+                }
+            } catch (error) {
+                enqueueSnackbar({
+                    message: `Failed to share credential: ${
+                        typeof error.response?.data === 'object' ? error.response.data.message : error.response?.data || error.message
+                    }`,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        persist: true,
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        }
     }
 
     const deleteCredential = async (credential) => {
@@ -291,6 +339,7 @@ const Credentials = () => {
                                             <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
                                             <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
                                             <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
+                                            <StyledTableCell style={{ width: '5%' }}> </StyledTableCell> {/* Thêm cột mới */}
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -315,8 +364,14 @@ const Credentials = () => {
                                                     <StyledTableCell>
                                                         <Skeleton variant='text' />
                                                     </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell> {/* Thêm skeleton mới */}
                                                 </StyledTableRow>
                                                 <StyledTableRow>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
                                                     <StyledTableCell>
                                                         <Skeleton variant='text' />
                                                     </StyledTableCell>
@@ -399,6 +454,16 @@ const Credentials = () => {
                                                                 </StyledTableCell>
                                                                 <StyledTableCell>
                                                                     <PermissionIconButton
+                                                                        permissionId={'credentials:share'}
+                                                                        title='Share to All Personal'
+                                                                        color='secondary'
+                                                                        onClick={() => shareToAllPersonal(credential)}
+                                                                    >
+                                                                        <IconUsers />
+                                                                    </PermissionIconButton>
+                                                                </StyledTableCell>
+                                                                <StyledTableCell>
+                                                                    <PermissionIconButton
                                                                         permissionId={'credentials:create,credentials:update'}
                                                                         title='Edit'
                                                                         color='primary'
@@ -421,7 +486,7 @@ const Credentials = () => {
                                                         )}
                                                         {credential.shared && (
                                                             <>
-                                                                <StyledTableCell colSpan={'3'}>Shared Credential</StyledTableCell>
+                                                                <StyledTableCell colSpan={'4'}>Shared Credential</StyledTableCell>
                                                             </>
                                                         )}
                                                     </StyledTableRow>
