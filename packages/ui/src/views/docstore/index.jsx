@@ -155,7 +155,7 @@ const Documents = () => {
                         onSearchChange={onSearchChange}
                         search={hasDocStores}
                         searchPlaceholder='Search Name'
-                        title='Document Store'
+                        title='My Documents'
                         description='Store and upsert documents for LLM retrieval (RAG)'
                     >
                         {hasDocStores && (

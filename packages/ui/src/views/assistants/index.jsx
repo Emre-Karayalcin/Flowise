@@ -27,13 +27,13 @@ const cards = [
         iconText: 'OpenAI',
         gradient: 'linear-gradient(135deg, #c9ffd85f 0%, #a0f0b567 100%)'
     },
-    {
-        title: 'Azure Assistant (Coming Soon)',
-        description: 'Create assistant using Azure Assistant API',
-        icon: <IconBrandAzure />,
-        iconText: 'Azure',
-        gradient: 'linear-gradient(135deg, #c4e1ff57 0%, #80b7ff5a 100%)'
-    }
+    // {
+    //     title: 'Azure Assistant (Coming Soon)',
+    //     description: 'Create assistant using Azure Assistant API',
+    //     icon: <IconBrandAzure />,
+    //     iconText: 'Azure',
+    //     gradient: 'linear-gradient(135deg, #c4e1ff57 0%, #80b7ff5a 100%)'
+    // }
 ]
 
 const StyledCard = styled(Card)(({ gradient }) => ({
@@ -84,11 +84,9 @@ const FeatureCards = () => {
                     gradient={card.gradient}
                     sx={{
                         flex: 1,
-                        maxWidth: 'calc((100% - 2 * 16px) / 3)',
+                        maxWidth: 'calc((100% - 2 * 16px) / 2)',
                         height: 'auto',
                         display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
                         border: 1,
                         borderColor: theme.palette.grey[900] + 25,
                         borderRadius: 2,

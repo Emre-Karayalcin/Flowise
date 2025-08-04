@@ -86,7 +86,7 @@ class AgentAsTool_Tools implements INode {
                 name: 'startNewSession',
                 type: 'boolean',
                 description:
-                    'Whether to continue the session with the Agentflow tool or start a new one with each interaction. Useful for Agentflows with memory if you want to avoid it.',
+                    'Whether to continue the session with the Agents tool or start a new one with each interaction. Useful for Agents with memory if you want to avoid it.',
                 default: false,
                 optional: true,
                 additionalParams: true

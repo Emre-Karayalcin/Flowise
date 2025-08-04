@@ -16,7 +16,9 @@ import {
     List,
     ListItemButton,
     ListItemText,
-    Chip
+    Chip,
+    Tooltip,
+    Fade
 } from '@mui/material'
 import { IconBulb, IconSparkles, IconPlus, IconX } from '@tabler/icons-react'
 import assistantsApi from '@/api/assistants'
@@ -51,6 +53,10 @@ const Dashboard = () => {
     const theme = useTheme()
     const [chatModelsComponents, setChatModelsComponents] = useState([])
     const [chatModelsOptions, setChatModelsOptions] = useState([])
+
+    // Thêm state cho tooltip
+    const [showTooltip, setShowTooltip] = useState(false)
+    const [isTyping, setIsTyping] = useState(false)
 
     // ==============================|| Snackbar ||============================== //
 
@@ -90,10 +96,24 @@ const Dashboard = () => {
         setModelDialogOpen(false)
     }
 
+    const handleInputChange = (e) => {
+        const value = e.target.value
+        setInput(value)
+        if (value.trim() && !selectedModel) {
+            setIsTyping(true)
+            setShowTooltip(true)
+        } else {
+            setShowTooltip(false)
+            setIsTyping(false)
+        }
+    }
+
     // Select model from dialog
     const handleSelectModel = (model) => {
         setSelectedModel(model)
         setModelDialogOpen(false)
+        setShowTooltip(false)
+        setIsTyping(false)
     }
 
     // Send logic: only allow if model is selected and input is not empty
@@ -189,7 +209,7 @@ const Dashboard = () => {
                         fontWeight: 800,
                         fontFamily: 'Tan Tangkiwood, sans-serif',
                         textAlign: 'center',
-                        fontSize: { xs: 24, md: 32 },
+                        fontSize: { xs: 24, md: 40 },
                         color: isDarkMode ? '#fff' : '#222',
                         mb: 0.5
                     }}
@@ -213,32 +233,68 @@ const Dashboard = () => {
                         pb: { xs: 1, md: 1 },
                         borderRadius: '20px',
                         minWidth: { xs: 320, md: 600 },
-                        maxWidth: 820,
+                        maxWidth: 840,
                         width: '100%',
                         bgcolor: isDarkMode ? '#23272a' : '#fff',
                         boxShadow: '0 4px 24px 0 rgba(0,0,0,0.08)',
                         border: 'none',
                         display: 'flex',
+                        overflow: 'visible',
                         flexDirection: 'column',
                         alignItems: 'stretch',
                         justifyContent: 'flex-start',
                         position: 'relative'
                     }}
                 >
+                    {showTooltip && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                bottom: -45,
+                                left: '5%',
+                                transform: 'translateX(0)',
+                                bgcolor: isDarkMode ? '#333' : '#fff',
+                                color: isDarkMode ? '#fff' : '#333',
+                                px: 2,
+                                py: 1,
+                                borderRadius: 2,
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                border: `1px solid ${isDarkMode ? '#555' : '#e0e0e0'}`,
+                                fontSize: 14,
+                                fontWeight: 500,
+                                zIndex: 1000,
+                                '&::after': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    bottom: '100%',
+                                    left: '20px',
+                                    transform: 'translateX(0)',
+                                    width: 0,
+                                    height: 0,
+                                    borderLeft: '8px solid transparent',
+                                    borderRight: '8px solid transparent',
+                                    borderBottom: `8px solid ${isDarkMode ? '#333' : '#fff'}`
+                                }
+                            }}
+                        >
+                            You need to select a model with the right credentials first
+                        </Box>
+                    )}
+
                     <TextField
                         fullWidth
                         multiline
                         minRows={1}
                         maxRows={6}
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={handleInputChange}
                         placeholder='Build a workflow to organize my daily tasks'
                         onKeyDown={handleKeyDown}
                         InputProps={{
                             disableUnderline: true,
                             sx: {
                                 fontSize: 15,
-                                fontWeight: 500,
+                                fontWeight: 400,
                                 color: isDarkMode ? '#fff' : '#222',
                                 px: 0,
                                 py: 0,
@@ -250,7 +306,6 @@ const Dashboard = () => {
                                     textAlign: 'left',
                                     resize: 'none',
                                     maxHeight: 120,
-                                    lineHeight: 1.4,
                                     backgroundColor: 'transparent',
                                     color: isDarkMode ? '#fff' : '#222'
                                 }
@@ -263,49 +318,52 @@ const Dashboard = () => {
                     />
 
                     <Stack direction='row' alignItems='center' width='100%' sx={{ mt: 'auto' }}>
-                        <Typography
-                            sx={{
-                                color: isDarkMode ? '#bdbdbd' : '#8b939b',
-                                fontSize: 15,
-                                fontWeight: 500,
-                                display: 'flex',
-                                alignItems: 'center',
-                                cursor: 'pointer',
-                                transition: 'color 0.2s',
-                                '&:hover': {
-                                    color: '#ffe066',
-                                    '& svg': {
-                                        color: '#ffe066'
+                        <Tooltip title={!selectedModel ? '' : ''} placement='bottom' arrow>
+                            <Typography
+                                sx={{
+                                    color: isDarkMode ? '#bdbdbd' : '#8b939b',
+                                    fontSize: 16,
+                                    fontWeight: 500,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'color 0.2s',
+                                    '&:hover': {
+                                        color: '#ffe066',
+                                        '& svg': {
+                                            color: '#ffe066'
+                                        }
                                     }
-                                }
-                            }}
-                            onClick={handleOpenModelDialog}
-                        >
-                            <span style={{ marginRight: 8, fontSize: 15, display: 'flex', alignItems: 'center' }}>
-                                {selectedModel && selectedModel.name ? (
-                                    <img
-                                        src={`/api/v1/node-icon/${selectedModel.name}`}
-                                        alt={selectedModel.label}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            verticalAlign: 'middle',
-                                            borderRadius: 4,
-                                            background: isDarkMode ? '#292211' : '#fffde7',
-                                            transition: 'filter 0.2s'
-                                        }}
-                                    />
-                                ) : (
-                                    <IconSparkles style={{ color: 'inherit', transition: 'color 0.2s' }} />
-                                )}
-                            </span>
-                            {selectedModel ? `Change Model` : 'Select Model'}
-                        </Typography>
+                                }}
+                                onClick={handleOpenModelDialog}
+                            >
+                                <span style={{ marginRight: 8, fontSize: 15, display: 'flex', alignItems: 'center' }}>
+                                    {selectedModel && selectedModel.name ? (
+                                        <img
+                                            src={`/api/v1/node-icon/${selectedModel.name}`}
+                                            alt={selectedModel.label}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                verticalAlign: 'middle',
+                                                borderRadius: 4,
+                                                background: isDarkMode ? '#292211' : '#fffde7',
+                                                transition: 'filter 0.2s'
+                                            }}
+                                        />
+                                    ) : (
+                                        <IconSparkles style={{ color: 'inherit', transition: 'color 0.2s' }} />
+                                    )}
+                                </span>
+                                {selectedModel ? `Change Model` : 'Select Model'}
+                            </Typography>
+                        </Tooltip>
+
                         <Box flex={1} />
                         <Typography
                             sx={{
                                 color: isDarkMode ? '#888' : '#bdbdbd',
-                                fontSize: 14,
+                                fontSize: 16,
                                 mr: 1.5,
                                 fontWeight: 400
                             }}
@@ -415,6 +473,8 @@ const Dashboard = () => {
                         variant='contained'
                         onClick={() => {
                             setModelDialogOpen(false)
+                            setShowTooltip(false)
+                            setIsTyping(false)
                         }}
                         startIcon={<IconPlus />}
                         sx={{ borderRadius: 2, height: 40, fontWeight: 700, fontSize: 16 }}

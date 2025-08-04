@@ -86,31 +86,6 @@ const dashboard = {
                     permission: 'chatflows:view'
                 },
                 {
-                    id: 'agentflows',
-                    title: 'Agents',
-                    type: 'item',
-                    url: '/agentflows',
-                    icon: icons.IconUsersGroup,
-                    breadcrumbs: true,
-                    permission: 'agentflows:view'
-                }
-            ]
-        },
-        {
-            id: 'operations',
-            title: 'Operations',
-            type: 'group',
-            children: [
-                {
-                    id: 'executions',
-                    title: 'Executions',
-                    type: 'item',
-                    url: '/executions',
-                    icon: icons.IconListCheck,
-                    breadcrumbs: true,
-                    permission: 'executions:view'
-                },
-                {
                     id: 'assistants',
                     title: 'Assistants',
                     type: 'item',
@@ -119,31 +94,38 @@ const dashboard = {
                     breadcrumbs: true,
                     permission: 'assistants:view'
                 },
+            ]
+        },
+        {
+            id: 'operations',
+            title: 'Agents',
+            type: 'group',
+            children: [
                 {
-                    id: 'marketplaces',
-                    title: 'Marketplaces',
+                    id: 'agentflows',
+                    title: 'Agents',
                     type: 'item',
-                    url: '/marketplaces',
-                    icon: icons.IconBuildingStore,
+                    url: '/agentflows',
+                    icon: icons.IconUsersGroup,
                     breadcrumbs: true,
-                    permission: 'templates:marketplace,templates:custom'
+                    permission: 'agentflows:view'
+                },
+                {
+                    id: 'executions',
+                    title: 'Executions',
+                    type: 'item',
+                    url: '/executions',
+                    icon: icons.IconListCheck,
+                    breadcrumbs: true,
+                    permission: 'executions:view'
                 }
             ]
         },
         {
             id: 'setup',
-            title: 'Setup',
+            title: 'My Data',
             type: 'group',
             children: [
-                {
-                    id: 'tools',
-                    title: 'Tools',
-                    type: 'item',
-                    url: '/tools',
-                    icon: icons.IconTool,
-                    breadcrumbs: true,
-                    permission: 'tools:view'
-                },
                 {
                     id: 'variables',
                     title: 'Variables',
@@ -155,28 +137,12 @@ const dashboard = {
                 },
                 {
                     id: 'document-stores',
-                    title: 'Document Stores',
+                    title: 'My Documents',
                     type: 'item',
                     url: '/document-stores',
                     icon: icons.IconFiles,
                     breadcrumbs: true,
                     permission: 'documentStores:view'
-                }
-            ]
-        },
-        {
-            id: 'integrations',
-            title: 'Integrations',
-            type: 'group',
-            children: [
-                {
-                    id: 'apikey',
-                    title: 'API Keys',
-                    type: 'item',
-                    url: '/apikey',
-                    icon: icons.IconKey,
-                    breadcrumbs: true,
-                    permission: 'apikeys:view'
                 },
                 {
                     id: 'credentials',
@@ -186,43 +152,6 @@ const dashboard = {
                     icon: icons.IconLock,
                     breadcrumbs: true,
                     permission: 'credentials:view'
-                }
-            ]
-        },
-        {
-            id: 'evaluations',
-            title: 'Evaluations',
-            type: 'group',
-            children: [
-                {
-                    id: 'datasets',
-                    title: 'Datasets',
-                    type: 'item',
-                    url: '/datasets',
-                    icon: icons.IconDatabase,
-                    breadcrumbs: true,
-                    display: 'feat:datasets',
-                    permission: 'datasets:view'
-                },
-                {
-                    id: 'evaluators',
-                    title: 'Evaluators',
-                    type: 'item',
-                    url: '/evaluators',
-                    icon: icons.IconTestPipe,
-                    breadcrumbs: true,
-                    display: 'feat:evaluators',
-                    permission: 'evaluators:view'
-                },
-                {
-                    id: 'evaluations',
-                    title: 'Evaluations',
-                    type: 'item',
-                    url: '/evaluations',
-                    icon: icons.IconChartHistogram,
-                    breadcrumbs: true,
-                    display: 'feat:evaluations',
-                    permission: 'evaluations:view'
                 }
             ]
         },

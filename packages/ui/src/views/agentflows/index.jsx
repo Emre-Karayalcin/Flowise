@@ -29,6 +29,7 @@ import { useError } from '@/store/context/ErrorContext'
 
 // icons
 import { IconPlus, IconLayoutGrid, IconList } from '@tabler/icons-react'
+import { IconArrowRight } from '@tabler/icons-react'
 
 // ==============================|| AGENTS ||============================== //
 
@@ -96,6 +97,10 @@ const Agentflows = () => {
         } else {
             navigate('/agentcanvas')
         }
+    }
+
+    const goToMarketPlace = (selectedAgentflow) => {
+        navigate(`/marketplaces`)
     }
 
     const goToCanvas = (selectedAgentflow) => {
@@ -171,29 +176,9 @@ const Agentflows = () => {
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Search Name or Category'
-                        title='Agentflows'
-                        description='Multi-agent systems, workflow orchestration'
+                        title='Agents'
+                        description='Build agents to help you with complex tasks'
                     >
-                        <ToggleButtonGroup
-                            sx={{ borderRadius: 2, maxHeight: 40 }}
-                            value={agentflowVersion}
-                            color='primary'
-                            exclusive
-                            onChange={handleVersionChange}
-                        >
-                            <ToggleButton
-                                sx={{
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
-                                }}
-                                variant='contained'
-                                value='v2'
-                                title='V1'
-                            >
-                                V1
-                            </ToggleButton>
-                        </ToggleButtonGroup>
                         <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
                             value={view}
@@ -235,6 +220,14 @@ const Agentflows = () => {
                             sx={{ borderRadius: 2, height: 40 }}
                         >
                             Add New
+                        </StyledPermissionButton>
+                        <StyledPermissionButton
+                            variant='contained'
+                            onClick={goToMarketPlace}
+                            endIcon={<IconArrowRight />}
+                            sx={{ borderRadius: 2, height: 40 }}
+                        >
+                            Go to Marketplace
                         </StyledPermissionButton>
                     </ViewHeader>
                     {!isLoading && total > 0 && (

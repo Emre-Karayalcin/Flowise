@@ -113,7 +113,7 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
         }
         const body = req.body
         const loadMethod = body.loadMethod || 'listTools'
-        console.log("loadMethod", loadMethod)
+        console.log('loadMethod', loadMethod)
 
         body.searchOptions = getWorkspaceSearchOptionsFromReq(req)
         const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, body)
@@ -135,19 +135,21 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
                 'writeFile'
             ]
 
-            console.log("apiResponse Tools")
-
             const filteredResponse = apiResponse.filter((tool: any) => allowedToolNames.includes(tool.name))
-            console.log("Filtering Tools - filtered count:", filteredResponse.length)
-
             return res.json(filteredResponse)
         }
         
         if (loadMethod === 'listModels') {
-            const allowedModelNames = ['chatOpenAI', 'chatOpenAICustom']
-            console.log("apiResponse Models")
+            const allowedModelNames = [
+                'chatOpenAI',
+                'chatOpenAICustom',
+                'chatAnthropic',
+                'chatGoogleGenerativeAI',
+                'chatDeepseek',
+                'groqChat',
+                'chatPerplexity'
+            ]
             const filteredResponse = apiResponse.filter((tool: any) => allowedModelNames.includes(tool.name))
-            console.log("Filtering Models - filtered count:", filteredResponse.length)
 
             return res.json(filteredResponse)
         }
