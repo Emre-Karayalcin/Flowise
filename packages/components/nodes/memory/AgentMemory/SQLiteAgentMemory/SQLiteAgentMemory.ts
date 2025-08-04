@@ -25,7 +25,7 @@ class SQLiteAgentMemory_Memory implements INode {
         this.type = 'SQLiteAgentMemory'
         this.icon = 'sqlite.png'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation using SQLite database'
+        this.description = 'Memory for agents to remember the state of the conversation using SQLite database'
         this.baseClasses = [this.type, ...getBaseClasses(SqliteSaver)]
         this.inputs = [
             /*{

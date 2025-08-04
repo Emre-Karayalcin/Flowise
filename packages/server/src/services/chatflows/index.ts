@@ -146,7 +146,7 @@ const getAllChatflows = async (type?: ChatflowType, workspaceId?: string, page: 
         } else if (type === 'ASSISTANT') {
             queryBuilder.andWhere('chat_flow.type = :type', { type: 'ASSISTANT' })
         } else if (type === 'CHATFLOW') {
-            // fetch all chatflows that are not agentflow
+            // fetch all chatflows that are not agents
             queryBuilder.andWhere('chat_flow.type = :type', { type: 'CHATFLOW' })
         }
         if (workspaceId) queryBuilder.andWhere('chat_flow.workspaceId = :workspaceId', { workspaceId })

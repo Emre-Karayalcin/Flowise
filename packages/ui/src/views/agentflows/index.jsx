@@ -222,6 +222,7 @@ const Agentflows = () => {
                             Add New
                         </StyledPermissionButton>
                         <StyledPermissionButton
+                            permissionId={'agentflows:create'}
                             variant='contained'
                             onClick={goToMarketPlace}
                             endIcon={<IconArrowRight />}

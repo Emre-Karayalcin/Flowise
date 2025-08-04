@@ -183,7 +183,7 @@ class ExecuteFlow_SeqAgents implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const chatflowApiKey = getCredentialParam('chatflowApiKey', credentialData, nodeData)
 
-        if (selectedFlowId === options.chatflowid) throw new Error('Cannot call the same agentflow!')
+        if (selectedFlowId === options.chatflowid) throw new Error('Cannot call the same agents!')
 
         let headers = {}
         if (chatflowApiKey) headers = { Authorization: `Bearer ${chatflowApiKey}` }

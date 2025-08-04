@@ -25,7 +25,15 @@ const getAllowedToolMCPNames = () => ['slackMCP']
 
 const getAllowedLLMSNames = () => ['openAI']
 
-const getAllowedChatModelNames = () => ['chatOpenAI', 'chatOpenAICustom']
+const getAllowedChatModelNames = () => [
+    'chatOpenAI',
+    'chatOpenAICustom',
+    'chatAnthropic',
+    'chatGoogleGenerativeAI',
+    'chatDeepseek',
+    'groqChat',
+    'chatPerplexity'
+]
 
 const filterToolsByCategory = (nodes: any[]) => {
     const allowedNames = getAllowedToolNames()
@@ -42,6 +50,16 @@ const filterToolsByCategory = (nodes: any[]) => {
         }
         if (node.category === 'Chat Models') {
             return getAllowedChatModelNames().includes(node.name)
+        }
+        if (
+            node.category === 'Cache' ||
+            node.category === 'Embeddings' ||
+            node.category === 'Graph' ||
+            node.category === 'Record Manager' ||
+            node.category === 'Retrievers' ||
+            node.category === 'Vector Stores'
+        ) {
+            return false
         }
         return true
     })
@@ -138,7 +156,7 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
             const filteredResponse = apiResponse.filter((tool: any) => allowedToolNames.includes(tool.name))
             return res.json(filteredResponse)
         }
-        
+
         if (loadMethod === 'listModels') {
             const allowedModelNames = [
                 'chatOpenAI',

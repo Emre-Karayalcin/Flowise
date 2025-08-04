@@ -108,7 +108,17 @@ const updateAssistant = async (req: Request, res: Response, next: NextFunction) 
 const getChatModels = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const apiResponse = await assistantsService.getChatModels()
-        return res.json(apiResponse)
+        const getAllowedChatModelNames = () => [
+            'chatOpenAI',
+            'chatOpenAICustom',
+            'chatAnthropic',
+            'chatGoogleGenerativeAI',
+            'chatDeepseek',
+            'groqChat',
+            'chatPerplexity'
+        ]
+        const filteredResponse = apiResponse.filter((tool: any) => getAllowedChatModelNames().includes(tool.name))
+        return res.json(filteredResponse)
     } catch (error) {
         next(error)
     }

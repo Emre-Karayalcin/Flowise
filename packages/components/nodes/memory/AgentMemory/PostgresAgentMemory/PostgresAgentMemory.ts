@@ -24,7 +24,7 @@ class PostgresAgentMemory_Memory implements INode {
         this.type = 'AgentMemory'
         this.icon = 'postgres.svg'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation using Postgres database'
+        this.description = 'Memory for agents to remember the state of the conversation using Postgres database'
         this.baseClasses = [this.type, ...getBaseClasses(PostgresSaver)]
         this.credential = {
             label: 'Connect Credential',

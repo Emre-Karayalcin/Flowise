@@ -1102,7 +1102,7 @@
                 "type": "AgentMemory",
                 "baseClasses": ["AgentMemory", "BaseCheckpointSaver"],
                 "category": "Memory",
-                "description": "Memory for agentflow to remember the state of the conversation",
+                "description": "Memory for agents to remember the state of the conversation",
                 "inputParams": [
                     {
                         "label": "Database",
@@ -1147,7 +1147,7 @@
                         "id": "agentMemory_0-output-agentMemory-AgentMemory|BaseCheckpointSaver",
                         "name": "agentMemory",
                         "label": "AgentMemory",
-                        "description": "Memory for agentflow to remember the state of the conversation",
+                        "description": "Memory for agents to remember the state of the conversation",
                         "type": "AgentMemory | BaseCheckpointSaver"
                     }
                 ],

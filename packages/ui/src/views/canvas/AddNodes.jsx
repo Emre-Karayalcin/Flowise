@@ -159,9 +159,30 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     const groupByTags = (nodes, newTabValue = 0) => {
-        const langchainNodes = nodes.filter((nd) => !nd.tags)
-        const llmaindexNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('LlamaIndex'))
-        const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
+        const langchainNodes = nodes.filter((nd) => 
+            !nd.tags && 
+            nd.category !== 'LLMs' && 
+            nd.category !== 'Text Splitters' && 
+            nd.category !== 'Moderation' &&
+            nd.category !== 'Memory' &&
+            nd.category !== 'Output Parsers' &&
+            nd.category !== 'Prompts'
+        )
+        
+        const llmaindexNodes = nodes.filter((nd) => 
+            (nd.tags && nd.tags.includes('LlamaIndex')) || 
+            nd.category === 'LLMs'
+        )
+        
+        const utilitiesNodes = nodes.filter((nd) => 
+            (nd.tags && nd.tags.includes('Utilities')) ||
+            nd.category === 'Text Splitters' ||
+            nd.category === 'Moderation' ||
+            nd.category === 'Memory' ||
+            nd.category === 'Output Parsers' ||
+            nd.category === 'Prompts'
+        )
+        
         if (newTabValue === 0) {
             return langchainNodes
         } else if (newTabValue === 1) {
@@ -170,6 +191,33 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             return utilitiesNodes
         }
     }
+
+    const sortCategories = (categories, currentTabValue) => {
+        if (currentTabValue === 2) {
+            const functionOrder = [
+                'Text Splitters',
+                'Moderation', 
+                'Prompts',
+                'Memory',
+                'Output Parsers'
+            ]
+            
+            return categories.sort((a, b) => {
+                const indexA = functionOrder.indexOf(a)
+                const indexB = functionOrder.indexOf(b)
+                
+                if (indexA !== -1 && indexB !== -1) {
+                    return indexA - indexB
+                }
+                if (indexA !== -1) return -1
+                if (indexB !== -1) return 1
+                return a.localeCompare(b)
+            })
+        }
+        
+        return categories.sort()
+    }
+
 
     const groupByCategory = (nodes, newTabValue, isFilter) => {
         if (isAgentCanvas) {
@@ -235,6 +283,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             }
 
             setNodes(filteredResult)
+            console.log('Filtered Nodes:', filteredResult, newTabValue)
             setCategoryExpanded(accordianCategories)
         }
     }
@@ -305,7 +354,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         setDialogProps({
             title: 'What would you like to build?',
             description:
-                'Enter your prompt to generate an agentflow. Performance may vary with different models. Only nodes and edges are generated, you will need to fill in the input fields for each node.'
+                'Enter your prompt to generate an agents. Performance may vary with different models. Only nodes and edges are generated, you will need to fill in the input fields for each node.'
         })
     }
 
@@ -345,7 +394,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                     size='small'
                     color='primary'
                     aria-label='generate'
-                    title='Generate Agentflow'
+                    title='Generate Agents'
                 >
                     <IconSparkles />
                 </StyledFab>
@@ -434,7 +483,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 onChange={handleTabChange}
                                                 aria-label='tabs'
                                             >
-                                                {['LangChain', 'LlamaIndex', 'Utilities'].map((item, index) => (
+                                                {['Apps', 'LLMs', 'Functions'].map((item, index) => (
                                                     <Tab
                                                         icon={
                                                             <div
@@ -497,8 +546,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                     }
                                                 }}
                                             >
-                                                {Object.keys(nodes)
-                                                    .sort()
+                                                {sortCategories(Object.keys(nodes), tabValue)
                                                     .map((category) => (
                                                         <Accordion
                                                             expanded={categoryExpanded[category] || false}

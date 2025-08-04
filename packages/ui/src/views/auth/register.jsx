@@ -34,6 +34,7 @@ import AzureSSOLoginIcon from '@/assets/images/microsoft-azure.svg'
 import { store } from '@/store'
 import { loginSuccess } from '@/store/reducers/authSlice'
 import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react'
+import { useSelector } from 'react-redux'
 
 // ==============================|| Register ||============================== //
 
@@ -65,6 +66,7 @@ const RegisterCloudUserSchema = z
 
 const RegisterPage = () => {
     const theme = useTheme()
+    const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     useNotifier()
     const { isEnterpriseLicensed, isCloud, isOpenSource } = useConfig()
 
@@ -251,7 +253,13 @@ const RegisterPage = () => {
 
     return (
         <>
-            <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <Box sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
                 {/* Logo + Welcome */}
 
                 {authError && (
@@ -265,7 +273,9 @@ const RegisterPage = () => {
                             right: 32,
                             minWidth: 320,
                             zIndex: 9999,
-                            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)'
+                            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)',
+                            bgcolor: isDarkMode ? '#23272a' : undefined,
+                            color: isDarkMode ? '#fff' : undefined
                         }}
                     >
                         {authError.split(', ').length > 0 ? (
@@ -290,7 +300,9 @@ const RegisterPage = () => {
                             right: 32,
                             minWidth: 320,
                             zIndex: 9999,
-                            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)'
+                            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)',
+                            bgcolor: isDarkMode ? '#23272a' : undefined,
+                            color: isDarkMode ? '#fff' : undefined
                         }}
                     >
                         {successMsg}
@@ -306,14 +318,14 @@ const RegisterPage = () => {
                             fontFamily: 'Tan Tangkiwood, sans-serif',
                             fontWeight: 700,
                             fontSize: 28,
-                            color: '#222',
+                            color: isDarkMode ? '#fff' : '#222',
                             mb: 1,
                             textAlign: 'center'
                         }}
                     >
                         Welcome to Nuggets
                     </Typography>
-                    <Typography sx={{ color: '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
+                    <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
                         AI-powered workflow automation platform
                     </Typography>
                 </Box>
@@ -321,9 +333,9 @@ const RegisterPage = () => {
                 <Box
                     sx={{
                         width: 500,
-                        bgcolor: '#fff',
+                        bgcolor: isDarkMode ? '#23272a' : '#fff',
                         borderRadius: 3,
-                        boxShadow: '0 8px 32px 0 rgba(0,0,0,0.08)',
+                        boxShadow: isDarkMode ? '0 8px 32px 0 rgba(0,0,0,0.6)' : '0 8px 32px 0 rgba(0,0,0,0.08)',
                         p: 0,
                         display: 'flex',
                         flexDirection: 'column',
@@ -336,11 +348,11 @@ const RegisterPage = () => {
                         variant='fullWidth'
                         sx={{
                             width: '100%',
-                            bgcolor: '#f5f5f4',
+                            bgcolor: isDarkMode ? '#18181b' : '#f5f5f4',
                             borderRadius: '4px',
                             padding: "6px 8px",
                             minHeight: 32,
-                            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
+                            boxShadow: isDarkMode ? '0 2px 8px 0 rgba(0,0,0,0.24)' : '0 2px 8px 0 rgba(0,0,0,0.04)',
                             '& .MuiTabs-indicator': {
                                 backgroundColor: 'transparent',
                                 height: 0,
@@ -350,14 +362,14 @@ const RegisterPage = () => {
                                 fontSize: 16,
                                 textTransform: 'none',
                                 minHeight: 32,
-                                bgcolor: '#f5f5f4',
-                                color: '#888',
+                                bgcolor: isDarkMode ? '#18181b' : '#f5f5f4',
+                                color: isDarkMode ? '#bdbdbd' : '#888',
                                 borderRadius: '4px',
                                 transition: 'color 0.2s, background 0.2s',
                             },
                             '& .Mui-selected': {
                                 color: '#FFA726',
-                                bgcolor: '#fff',
+                                bgcolor: isDarkMode ? '#23272a' : '#fff',
                             }
                         }}
                     >
@@ -372,12 +384,12 @@ const RegisterPage = () => {
                                 fontWeight: 600,
                                 fontSize: 22,
                                 mb: 1,
-                                color: '#222',
+                                color: isDarkMode ? '#fff' : '#222',
                             }}
                         >
                             Create your account
                         </Typography>
-                        <Typography sx={{ color: '#6b7280', mb: 3, fontSize: 15 }}>
+                        <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', mb: 3, fontSize: 15 }}>
                             Join Nuggets to start building AI-powered workflows.
                         </Typography>
                         {/* Form */}

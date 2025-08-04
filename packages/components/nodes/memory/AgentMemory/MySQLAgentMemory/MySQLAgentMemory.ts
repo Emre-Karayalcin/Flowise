@@ -24,7 +24,7 @@ class MySQLAgentMemory_Memory implements INode {
         this.type = 'AgentMemory'
         this.icon = 'mysql.png'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation using MySQL database'
+        this.description = 'Memory for agents to remember the state of the conversation using MySQL database'
         this.baseClasses = [this.type, ...getBaseClasses(MySQLSaver)]
         this.credential = {
             label: 'Connect Credential',

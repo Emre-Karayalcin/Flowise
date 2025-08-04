@@ -488,7 +488,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                 {colorField(backgroundColor, 'backgroundColor', 'Background Color')}
                 {textField(fontSize, 'fontSize', 'Font Size', 'number')}
                 {colorField(poweredByTextColor, 'poweredByTextColor', 'PoweredBy TextColor')}
-                {isAgentCanvas && booleanField(showAgentMessages, 'showAgentMessages', 'Show agent reasonings when using Agentflow')}
+                {isAgentCanvas && booleanField(showAgentMessages, 'showAgentMessages', 'Show agent reasonings when using Agents')}
                 {booleanField(renderHTML, 'renderHTML', 'Render HTML on the chat')}
                 {isSessionMemory &&
                     booleanField(generateNewSession, 'generateNewSession', 'Start new session when chatbot link is opened or refreshed')}

@@ -27,7 +27,7 @@ class AgentAsTool_Tools implements INode {
         this.type = 'AgentAsTool'
         this.icon = 'agentastool.svg'
         this.category = 'Tools'
-        this.description = 'Use as a tool to execute another agentflow'
+        this.description = 'Use as a tool to execute another agents'
         this.baseClasses = [this.type, 'Tool']
         this.credential = {
             label: 'Connect Credential',
@@ -96,7 +96,7 @@ class AgentAsTool_Tools implements INode {
                 name: 'useQuestionFromChat',
                 type: 'boolean',
                 description:
-                    'Whether to use the question from the chat as input to the agentflow. If turned on, this will override the custom input.',
+                    'Whether to use the question from the chat as input to the agents. If turned on, this will override the custom input.',
                 optional: true,
                 additionalParams: true
             },
@@ -104,7 +104,7 @@ class AgentAsTool_Tools implements INode {
                 label: 'Custom Input',
                 name: 'customInput',
                 type: 'string',
-                description: 'Custom input to be passed to the agentflow. Leave empty to let LLM decides the input.',
+                description: 'Custom input to be passed to the agents. Leave empty to let LLM decides the input.',
                 optional: true,
                 additionalParams: true,
                 show: {
@@ -162,7 +162,7 @@ class AgentAsTool_Tools implements INode {
 
         // Validate agentflowid is a valid UUID
         if (!selectedAgentflowId || !isValidUUID(selectedAgentflowId)) {
-            throw new Error('Invalid agentflow ID: must be a valid UUID')
+            throw new Error('Invalid agents ID: must be a valid UUID')
         }
 
         // Validate baseURL is a valid URL
@@ -173,7 +173,7 @@ class AgentAsTool_Tools implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const agentflowApiKey = getCredentialParam('agentflowApiKey', credentialData, nodeData)
 
-        if (selectedAgentflowId === options.chatflowid) throw new Error('Cannot call the same agentflow!')
+        if (selectedAgentflowId === options.chatflowid) throw new Error('Cannot call the same agents!')
 
         let headers = {}
         if (agentflowApiKey) headers = { Authorization: `Bearer ${agentflowApiKey}` }
@@ -208,7 +208,7 @@ class AgentflowTool extends StructuredTool {
 
     name = 'agentflow_tool'
 
-    description = 'Execute another agentflow'
+    description = 'Execute another agents'
 
     input = ''
 

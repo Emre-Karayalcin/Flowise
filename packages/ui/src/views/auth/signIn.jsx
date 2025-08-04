@@ -38,6 +38,7 @@ import GithubSSOLoginIcon from '@/assets/images/github.svg'
 
 const SignInPage = () => {
     const theme = useTheme()
+    const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     useSelector((state) => state.customization)
     useNotifier()
     const { isEnterpriseLicensed, isCloud, isOpenSource } = useConfig()
@@ -179,7 +180,13 @@ const SignInPage = () => {
     }
 
     return (
-        <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+        }}>
             {authError && (
                 <Alert
                     icon={<IconExclamationCircle />}
@@ -191,7 +198,9 @@ const SignInPage = () => {
                         right: 32,
                         minWidth: 320,
                         zIndex: 9999,
-                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)'
+                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.15)',
+                        bgcolor: isDarkMode ? '#23272a' : undefined,
+                        color: isDarkMode ? '#fff' : undefined
                     }}
                 >
                     {authError.split(', ').length > 0 ? (
@@ -244,14 +253,14 @@ const SignInPage = () => {
                         fontFamily: 'Tan Tangkiwood, sans-serif',
                         fontWeight: 700,
                         fontSize: 28,
-                        color: '#222',
+                        color: isDarkMode ? '#fff' : '#222',
                         mb: 1,
                         textAlign: 'center'
                     }}
                 >
                     Welcome to Nuggets
                 </Typography>
-                <Typography sx={{ color: '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
+                <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
                     AI-powered workflow automation platform
                 </Typography>
             </Box>
@@ -259,9 +268,9 @@ const SignInPage = () => {
             <Box
                 sx={{
                     width: 500,
-                    bgcolor: '#fff',
+                    bgcolor: isDarkMode ? '#23272a' : '#fff',
                     borderRadius: 3,
-                    boxShadow: '0 8px 32px 0 rgba(0,0,0,0.2)',
+                    boxShadow: isDarkMode ? '0 8px 32px 0 rgba(0,0,0,0.6)' : '0 8px 32px 0 rgba(0,0,0,0.2)',
                     p: 0,
                     display: 'flex',
                     flexDirection: 'column',
@@ -275,11 +284,11 @@ const SignInPage = () => {
                     variant='fullWidth'
                     sx={{
                         width: '100%',
-                        bgcolor: '#f5f5f4',
+                        bgcolor: isDarkMode ? '#18181b' : '#f5f5f4',
                         borderRadius: '4px',
                         padding: '6px 8px',
                         minHeight: 32,
-                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
+                        boxShadow: isDarkMode ? '0 2px 8px 0 rgba(0,0,0,0.24)' : '0 2px 8px 0 rgba(0,0,0,0.04)',
                         '& .MuiTabs-indicator': {
                             backgroundColor: 'transparent',
                             height: 0
@@ -289,14 +298,14 @@ const SignInPage = () => {
                             fontSize: 16,
                             textTransform: 'none',
                             minHeight: 32,
-                            bgcolor: '#f5f5f4',
-                            color: '#888',
+                            bgcolor: isDarkMode ? '#18181b' : '#f5f5f4',
+                            color: isDarkMode ? '#bdbdbd' : '#888',
                             borderRadius: '4px',
                             transition: 'color 0.2s, background 0.2s'
                         },
                         '& .Mui-selected': {
                             color: '#FFA726',
-                            bgcolor: '#fff'
+                            bgcolor: isDarkMode ? '#23272a' : '#fff'
                         }
                     }}
                 >
@@ -311,12 +320,12 @@ const SignInPage = () => {
                             fontWeight: 600,
                             fontSize: 22,
                             mb: 1,
-                            color: '#222'
+                            color: isDarkMode ? '#fff' : '#222'
                         }}
                     >
                         Sign in to your account
                     </Typography>
-                    <Typography sx={{ color: '#6b7280', mb: 3, fontSize: 15 }}>
+                    <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', mb: 3, fontSize: 15 }}>
                         Enter your email and password to access your workflows.
                     </Typography>
                     {/* Form */}
@@ -397,9 +406,8 @@ const SignInPage = () => {
                             borderRadius: 2,
                             fontWeight: 500,
                             fontSize: 14,
-                            color: '#888',
                             borderColor: '#eee',
-                            background: '#fafafa',
+                            bgcolor: isDarkMode ? '#6b7280' : '#fafafa',
                             textTransform: 'none',
                             opacity: 1,
                             cursor: 'not-allowed'

@@ -137,7 +137,7 @@ const Dashboard = () => {
                 })
             } else {
                 enqueueSnackbar({
-                    message: response.error || 'Failed to generate agentflow',
+                    message: response.error || 'Failed to generate agents',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -152,7 +152,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: error.response?.data?.message || 'Failed to generate agentflow',
+                message: error.response?.data?.message || 'Failed to generate agents',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -414,7 +414,7 @@ const Dashboard = () => {
                     }
                 }}
             >
-                <DialogTitle sx={{ fontWeight: 700, fontSize: 20, mb: 1 }}>Select model to generate agentflow</DialogTitle>
+                <DialogTitle sx={{ fontWeight: 700, fontSize: 20, mb: 1 }}>Select model to generate agents</DialogTitle>
                 <DialogContent>
                     <Box sx={{ mt: 2 }}>
                         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
