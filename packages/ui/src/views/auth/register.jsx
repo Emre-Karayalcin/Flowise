@@ -309,7 +309,7 @@ const RegisterPage = () => {
                     </Alert>
                 )}
                 <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Box sx={{ bgcolor: '#FFA726', width: 56, height: 56, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                    <Box sx={{ bgcolor: '#21a29a', width: 56, height: 56, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                         <Typography sx={{ fontWeight: 800, fontSize: 24, color: '#fff' }}>N</Typography>
                     </Box>
                     <Typography
@@ -368,7 +368,7 @@ const RegisterPage = () => {
                                 transition: 'color 0.2s, background 0.2s',
                             },
                             '& .Mui-selected': {
-                                color: '#FFA726',
+                                color: '#21a29a',
                                 bgcolor: isDarkMode ? '#23272a' : '#fff',
                             }
                         }}
@@ -397,7 +397,7 @@ const RegisterPage = () => {
                             <Stack sx={{ width: '100%', gap: 2 }}>
                                 <Box>
                                     <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
-                                        Full Name <span style={{ color: '#FFA726' }}>*</span>
+                                        Full Name <span style={{ color: '#21a29a' }}>*</span>
                                     </Typography>
                                     <Input
                                         inputParam={usernameInput}
@@ -409,7 +409,7 @@ const RegisterPage = () => {
                                 </Box>
                                 <Box>
                                     <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
-                                        Email <span style={{ color: '#FFA726' }}>*</span>
+                                        Email <span style={{ color: '#21a29a' }}>*</span>
                                     </Typography>
                                     <Input
                                         inputParam={emailInput}
@@ -420,13 +420,13 @@ const RegisterPage = () => {
                                 </Box>
                                 <Box>
                                     <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
-                                        Password <span style={{ color: '#FFA726' }}>*</span>
+                                        Password <span style={{ color: '#21a29a' }}>*</span>
                                     </Typography>
                                     <Input inputParam={passwordInput} onChange={(newValue) => setPassword(newValue)} value={password} />
                                 </Box>
                                 <Box>
                                     <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
-                                        Confirm Password <span style={{ color: '#FFA726' }}>*</span>
+                                        Confirm Password <span style={{ color: '#21a29a' }}>*</span>
                                     </Typography>
                                     <Input
                                         inputParam={confirmPasswordInput}
@@ -443,12 +443,12 @@ const RegisterPage = () => {
                                         height: 40,
                                         fontSize: 16,
                                         fontWeight: 500,
-                                        bgcolor: '#FFA726',
+                                        bgcolor: '#21a29a',
                                         color: '#fff',
                                         boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)',
                                         mt: 2,
                                         '&:hover': {
-                                            bgcolor: '#FFA726',
+                                            bgcolor: '#21a29a',
                                             opacity: 0.85
                                         }
                                     }}

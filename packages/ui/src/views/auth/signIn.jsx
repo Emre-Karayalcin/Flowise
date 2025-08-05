@@ -235,7 +235,7 @@ const SignInPage = () => {
             <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box
                     sx={{
-                        bgcolor: '#FFA726',
+                        bgcolor: '#21a29a',
                         width: 56,
                         height: 56,
                         borderRadius: 2,
@@ -304,7 +304,7 @@ const SignInPage = () => {
                             transition: 'color 0.2s, background 0.2s'
                         },
                         '& .Mui-selected': {
-                            color: '#FFA726',
+                            color: '#21a29a',
                             bgcolor: isDarkMode ? '#23272a' : '#fff'
                         }
                     }}
@@ -333,7 +333,7 @@ const SignInPage = () => {
                         <Stack sx={{ width: '100%', gap: 2 }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
-                                    Email <span style={{ color: '#FFA726' }}>*</span>
+                                    Email <span style={{ color: '#21a29a' }}>*</span>
                                 </Typography>
                                 <Input
                                     inputParam={usernameInput}
@@ -350,7 +350,7 @@ const SignInPage = () => {
                             </Box>
                             <Box>
                                 <Typography sx={{ fontWeight: 600, mb: 1, fontSize: 15 }}>
-                                    Password <span style={{ color: '#FFA726' }}>*</span>
+                                    Password <span style={{ color: '#21a29a' }}>*</span>
                                 </Typography>
                                 <Input
                                     inputParam={passwordInput}
@@ -365,9 +365,9 @@ const SignInPage = () => {
                                 />
                                 <Typography
                                     variant='body2'
-                                    sx={{ color: '#FFA726', mt: 1, textAlign: 'right', fontWeight: 500, fontSize: 14 }}
+                                    sx={{ color: '#21a29a', mt: 1, textAlign: 'right', fontWeight: 500, fontSize: 14 }}
                                 >
-                                    <Link style={{ color: '#FFA726' }} to='/forgot-password'>
+                                    <Link style={{ color: '#21a29a' }} to='/forgot-password'>
                                         Forgot password?
                                     </Link>
                                 </Typography>
@@ -381,12 +381,12 @@ const SignInPage = () => {
                                     height: 40,
                                     fontSize: 16,
                                     fontWeight: 500,
-                                    bgcolor: '#FFA726',
+                                    bgcolor: '#21a29a',
                                     color: '#fff',
                                     boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)',
                                     mt: 2,
                                     '&:hover': {
-                                        bgcolor: '#FFA726',
+                                        bgcolor: '#21a29a',
                                         opacity: 0.85
                                     }
                                 }}
