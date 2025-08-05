@@ -28,11 +28,25 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     whiteSpace: 'pre-line'
 }))
 
+// Function to get display name
+const getDisplayName = (originalName) => {
+    const nameMapping = {
+        'Agentic RAG': 'Build an Agent that answers customer queries',
+        'Simple RAG': 'Document Retrieval Q&A Engine', 
+        'Agents Handoff': 'Support Agent That Passes Tasks to Others',
+        'Deep Research With Multi-turn Conversations': 'Smart Research System for Web & Reports'
+    }
+    
+    return nameMapping[originalName] || originalName
+}
+
 // ===========================|| CONTRACT CARD ||=========================== //
 
 const ItemCard = ({ data, images, icons, onClick }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+
+    const displayName = getDisplayName(data.templateName || data.name)
 
     return (
         <CardWrapper content={false} onClick={onClick} sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}>
@@ -88,7 +102,7 @@ const ItemCard = ({ data, images, icons, onClick }) => {
                                     overflow: 'hidden'
                                 }}
                             >
-                                {data.templateName || data.name}
+                                {displayName}
                             </Typography>
                         </div>
                         {data.description && (

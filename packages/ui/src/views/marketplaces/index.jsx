@@ -96,7 +96,7 @@ const Marketplace = () => {
     const [view, setView] = React.useState(localStorage.getItem('mpDisplayStyle') || 'card')
     const [search, setSearch] = useState('')
     const [badgeFilter, setBadgeFilter] = useState([])
-    const [typeFilter, setTypeFilter] = useState([])
+    const [typeFilter, setTypeFilter] = useState(['AgentflowV2'])
     const [frameworkFilter, setFrameworkFilter] = useState([])
 
     const getAllCustomTemplatesApi = useApi(marketplacesApi.getAllCustomTemplates)
@@ -506,42 +506,6 @@ const Marketplace = () => {
                                                     sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}
                                                 >
                                                     <Checkbox checked={badgeFilter.indexOf(name) > -1} sx={{ p: 0 }} />
-                                                    <ListItemText primary={name} />
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl
-                                        sx={{
-                                            borderRadius: 2,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'end',
-                                            minWidth: 120
-                                        }}
-                                    >
-                                        <InputLabel size='small' id='type-badge-label'>
-                                            Type
-                                        </InputLabel>
-                                        <Select
-                                            size='small'
-                                            labelId='type-badge-label'
-                                            id='type-badge-checkbox'
-                                            multiple
-                                            value={typeFilter}
-                                            onChange={handleTypeFilterChange}
-                                            input={<OutlinedInput label='Type' />}
-                                            renderValue={(selected) => selected.join(', ')}
-                                            MenuProps={MenuProps}
-                                            sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
-                                        >
-                                            {types.map((name) => (
-                                                <MenuItem
-                                                    key={name}
-                                                    value={name}
-                                                    sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}
-                                                >
-                                                    <Checkbox checked={typeFilter.indexOf(name) > -1} sx={{ p: 0 }} />
                                                     <ListItemText primary={name} />
                                                 </MenuItem>
                                             ))}

@@ -21,7 +21,19 @@ const getAllTemplates = async (req: Request, res: Response, next: NextFunction) 
             'SubQuestion Query Engine',
             'SendGrid Email',
             'Get Current DateTime',
-            'Simple DB Chain'
+            'Simple DB Chain',
+            'Make Webhook',
+            'Get Stock Mover',
+            'Spide Web Scraper',
+            'Spide Web Search & Scraper',
+            'Create Airtable Record',
+            'Simple Chat Engine',
+            'Github Docs QnA',
+            'Image Generation',
+            'OpenAPI YAML Agent',
+            'ReAct Agent',
+            'Context Chat Engine',
+            'LLM Chain'
         ]
         
         const filteredResponse = apiResponse.filter((template: any) => 

@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Box, Drawer, useMediaQuery, Avatar, Chip, Typography, Card, CardContent } from '@mui/material'
+import { Box, Drawer, useMediaQuery, Avatar, Typography, Card, CardContent, LinearProgress, Button } from '@mui/material'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { BrowserView, MobileView } from 'react-device-detect'
 
@@ -10,6 +11,8 @@ import MenuList from './MenuList'
 import LogoSection from '../LogoSection'
 import CloudMenuList from '@/layout/MainLayout/Sidebar/CloudMenuList'
 import userApi from '@/api/user'
+import useApi from '@/hooks/useApi'
+import accountApi from '@/api/account.api'
 
 // store
 import { drawerWidth, headerHeight } from '@/store/constant'
@@ -17,8 +20,10 @@ import { drawerWidth, headerHeight } from '@/store/constant'
 // User Info Component
 const UserInfoCard = () => {
     const theme = useTheme()
+    const navigate = useNavigate()
     const currentUser = useSelector((state) => state.auth.user)
     const [credits, setCredits] = useState(currentUser?.credits || 0)
+    const logoutApi = useApi(accountApi.logout)
 
     useEffect(() => {
         const fetchCredits = async () => {
@@ -34,8 +39,20 @@ const UserInfoCard = () => {
         fetchCredits()
     }, [currentUser?.id])
 
+    useEffect(() => {
+        if (logoutApi.data) {
+            navigate('/signin')
+        }
+    }, [logoutApi.data, navigate])
+
+    const handleLogout = () => {
+        logoutApi.request()
+    }
+
     if (!currentUser) return null
     if (currentUser.isOrganizationAdmin) return null
+
+    const progressPercentage = 100
 
     return (
         <Card 
@@ -44,18 +61,59 @@ const UserInfoCard = () => {
                 mt: 'auto',
                 backgroundColor: theme.palette.background.paper,
                 border: `1px solid ${theme.palette.divider}`,
-                borderRadius: 2
+                borderRadius: 2,
+                boxShadow: 'none'
             }}
         >
-            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <CardContent sx={{ p: 1.6, '&:last-child': { pb: 1.6 } }}>
+                {/* Credits Section */}
+                <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                color: theme.palette.text.secondary,
+                                fontSize: '0.875rem'
+                            }}
+                        >
+                            Crumbs
+                        </Typography>
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                color: '#ff9800',
+                                fontSize: '0.875rem',
+                                fontWeight: 600
+                            }}
+                        >
+                            {credits.toLocaleString()}
+                        </Typography>
+                    </Box>
+                    <LinearProgress
+                        variant="determinate"
+                        value={progressPercentage}
+                        sx={{
+                            height: 8,
+                            borderRadius: 4,
+                            backgroundColor: theme.palette.grey[200],
+                            '& .MuiLinearProgress-bar': {
+                                backgroundColor: '#ff9800',
+                                borderRadius: 4
+                            }
+                        }}
+                    />
+                </Box>
+
+                {/* User Info Section */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
                     <Avatar 
                         sx={{ 
-                            width: 40, 
-                            height: 40,
-                            bgcolor: theme.palette.primary.main,
+                            width: 36, 
+                            height: 36,
+                            bgcolor: theme.palette.grey[400],
                             fontSize: '1rem',
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
+                            color: 'white'
                         }}
                     >
                         {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
@@ -69,28 +127,47 @@ const UserInfoCard = () => {
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
-                                mb: 0.5
+                                fontSize: '0.875rem',
+                                mb: 0.25
                             }}
                         >
                             {currentUser.name || 'User'}
                         </Typography>
-                        <Chip
-                            label={`${credits} Credits`}
-                            size="small"
+                        <Typography 
+                            variant="caption" 
                             sx={{ 
-                                height: 20,
-                                fontSize: '0.7rem',
-                                fontWeight: 600,
-                                bgcolor: theme.palette.primary.light,
-                                color: theme.palette.primary.contrastText,
-                                borderRadius: '10px',
-                                '& .MuiChip-label': {
-                                    px: 1
-                                }
+                                color: theme.palette.text.secondary,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                fontSize: '0.75rem'
                             }}
-                        />
+                        >
+                            {currentUser.email || 'user@example.com'}
+                        </Typography>
                     </Box>
                 </Box>
+
+                {/* Sign Out Button */}
+                <Button
+                    variant="outlined"
+                    onClick={handleLogout}
+                    disabled={logoutApi.loading}
+                    sx={{
+                        width: '100%',
+                        borderRadius: 2,
+                        borderColor: theme.palette.grey[300],
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        '&:hover': {
+                            borderColor: theme.palette.grey[400],
+                            backgroundColor: theme.palette.grey[50]
+                        }
+                    }}
+                >
+                    {logoutApi.loading ? 'Signing Out...' : 'Sign Out'}
+                </Button>
             </CardContent>
         </Card>
     )

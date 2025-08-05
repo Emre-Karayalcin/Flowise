@@ -110,7 +110,6 @@ const getChatModels = async (req: Request, res: Response, next: NextFunction) =>
         const apiResponse = await assistantsService.getChatModels()
         const getAllowedChatModelNames = () => [
             'chatOpenAI',
-            'chatOpenAICustom',
             'chatAnthropic',
             'chatGoogleGenerativeAI',
             'chatDeepseek',
