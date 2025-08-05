@@ -89,7 +89,7 @@ const dashboard = {
                     id: 'assistants',
                     title: 'Assistants',
                     type: 'item',
-                    url: '/assistants',
+                    url: '/assistants/custom',
                     icon: icons.IconRobot,
                     breadcrumbs: true,
                     permission: 'assistants:view'

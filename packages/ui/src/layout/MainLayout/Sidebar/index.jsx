@@ -1,18 +1,15 @@
 import PropTypes from 'prop-types'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-
-// material-ui
 import { useTheme } from '@mui/material/styles'
 import { Box, Drawer, useMediaQuery, Avatar, Chip, Typography, Card, CardContent } from '@mui/material'
-
-// third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { BrowserView, MobileView } from 'react-device-detect'
 
-// project imports
 import MenuList from './MenuList'
 import LogoSection from '../LogoSection'
 import CloudMenuList from '@/layout/MainLayout/Sidebar/CloudMenuList'
+import userApi from '@/api/user'
 
 // store
 import { drawerWidth, headerHeight } from '@/store/constant'
@@ -21,6 +18,21 @@ import { drawerWidth, headerHeight } from '@/store/constant'
 const UserInfoCard = () => {
     const theme = useTheme()
     const currentUser = useSelector((state) => state.auth.user)
+    const [credits, setCredits] = useState(currentUser?.credits || 0)
+
+    useEffect(() => {
+        const fetchCredits = async () => {
+            if (currentUser?.id) {
+                try {
+                    const res = await userApi.getUserById(currentUser.id)
+                    setCredits(res.data?.credits ?? 0)
+                } catch (err) {
+                    setCredits(currentUser?.credits || 0)
+                }
+            }
+        }
+        fetchCredits()
+    }, [currentUser?.id])
 
     if (!currentUser) return null
     if (currentUser.isOrganizationAdmin) return null
@@ -63,7 +75,7 @@ const UserInfoCard = () => {
                             {currentUser.name || 'User'}
                         </Typography>
                         <Chip
-                            label={`${currentUser.credits || 0} Credits`}
+                            label={`${credits} Credits`}
                             size="small"
                             sx={{ 
                                 height: 20,

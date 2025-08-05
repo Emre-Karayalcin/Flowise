@@ -29,7 +29,6 @@ import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
 
 export const ConfigInput = ({ data, inputParam, disabled = false, arrayIndex = null, parentParamForArray = null }) => {
     const theme = useTheme()
-    console.log('ConfigInput Data:', data, inputParam)
     const { reactFlowInstance } = useContext(flowContext)
 
     const [expanded, setExpanded] = useState(false)

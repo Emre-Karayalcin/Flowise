@@ -95,7 +95,6 @@ const CustomAssistantLayout = () => {
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
                         <ViewHeader
-                            isBackButton={true}
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Search Assistants'
