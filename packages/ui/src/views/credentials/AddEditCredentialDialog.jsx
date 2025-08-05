@@ -296,7 +296,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                     response_type: 'code',
                     response_mode: 'query',
                     additionalParameters: 'access_type=offline&prompt=consent',
-                    clientId: '646950814936-sjel4jdrnuill3bq2np0au8iu3243cb7.apps.googleusercontent.com'
+                    clientId: '250948105669-8uohm0jdje8i2k5j3brmkaouat8a5kjp.apps.googleusercontent.com'
                 }
             }
 

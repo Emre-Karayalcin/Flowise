@@ -110,7 +110,11 @@ const getOAuthConfig = (credentialName: string, decryptedData: any) => {
                 googleCalendarOAuth2: 'https://www.googleapis.com/auth/calendar',
                 googleSheetsOAuth2: 'https://www.googleapis.com/auth/spreadsheets',
                 googleDocsOAuth2: 'https://www.googleapis.com/auth/documents',
-                gmailOAuth2: 'https://www.googleapis.com/auth/gmail.readonly',
+                gmailOAuth2: [
+                    'https://www.googleapis.com/auth/gmail.send',
+                    'https://www.googleapis.com/auth/gmail.readonly',
+                    'https://www.googleapis.com/auth/gmail.modify'
+                ].join(' '),
                 googleDriveOAuth2: 'https://www.googleapis.com/auth/drive.file'
             }
             scope = defaultScopes[credentialName as keyof typeof defaultScopes] || 'https://www.googleapis.com/auth/drive.file'
@@ -384,7 +388,7 @@ router.get('/callback', async (req: Request, res: Response) => {
         // Special handling for Notion API - uses JSON payload and Basic Auth
         if (credential.credentialName === 'notionApi') {
             if (!clientSecret) {
-                console.error('[Notion OAuth] clientSecret missing, cannot proceed refresh');
+                console.error('[Notion OAuth] clientSecret missing, cannot proceed refresh')
                 return res.status(400).json({
                     success: false,
                     message: 'Notion OAuth requires client secret for token refresh'
@@ -534,7 +538,7 @@ router.post('/refresh/:credentialId', async (req: Request, res: Response, next: 
         // Special handling for Notion API refresh - uses JSON payload and Basic Auth
         if (credential.credentialName === 'notionApi') {
             if (!clientSecret) {
-                console.error('[Notion OAuth] clientSecret missing, cannot proceed refresh');
+                console.error('[Notion OAuth] clientSecret missing, cannot proceed refresh')
                 return res.status(400).json({
                     success: false,
                     message: 'Notion OAuth requires client secret for token refresh'
