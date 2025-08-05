@@ -1158,6 +1158,39 @@ const NodeInputHandler = ({
                         )}
                         {inputParam.type === 'multiOptions' && (
                             <div key={`${data.id}_${JSON.stringify(data.inputs[inputParam.name])}`}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, marginTop: 8 }}>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        disabled={disabled}
+                                        onClick={() => {
+                                            const allOptions = getDropdownOptions(inputParam).map(option => option.name);
+                                            handleDataChange({ inputParam, newValue: allOptions });
+                                        }}
+                                        sx={{
+                                            fontSize: '0.75rem',
+                                            padding: '4px 8px',
+                                            minWidth: 'auto'
+                                        }}
+                                    >
+                                        Select All
+                                    </Button>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        disabled={disabled}
+                                        onClick={() => {
+                                            handleDataChange({ inputParam, newValue: [] });
+                                        }}
+                                        sx={{
+                                            fontSize: '0.75rem',
+                                            padding: '4px 8px',
+                                            minWidth: 'auto'
+                                        }}
+                                    >
+                                        Clear All
+                                    </Button>
+                                </div>
                                 <MultiDropdown
                                     disabled={disabled}
                                     name={inputParam.name}

@@ -247,7 +247,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     const groupByTags = (nodes, newTabValue = 0) => {
-        const langchainNodes = nodes.filter((nd) => 
+        const normalizedNodes = nodes.map(node => ({
+            ...node,
+            category: node.category === 'Tools (MCP)' ? 'Tools' : node.category
+        }))
+        const langchainNodes = normalizedNodes.filter((nd) => 
             !nd.tags && 
             nd.category !== 'LLMs' && 
             nd.category !== 'Text Splitters' && 

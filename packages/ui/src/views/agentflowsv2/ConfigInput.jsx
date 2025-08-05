@@ -3,7 +3,15 @@ import PropTypes from 'prop-types'
 import { cloneDeep } from 'lodash'
 
 // Material
-import { Accordion, AccordionSummary, AccordionDetails, Box, Typography } from '@mui/material'
+import { 
+    Accordion, 
+    AccordionSummary, 
+    AccordionDetails, 
+    Box, 
+    Typography, 
+    Switch, 
+    FormControlLabel 
+} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { IconSettings } from '@tabler/icons-react'
@@ -21,10 +29,12 @@ import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
 
 export const ConfigInput = ({ data, inputParam, disabled = false, arrayIndex = null, parentParamForArray = null }) => {
     const theme = useTheme()
+    console.log('ConfigInput Data:', data, inputParam)
     const { reactFlowInstance } = useContext(flowContext)
 
     const [expanded, setExpanded] = useState(false)
     const [selectedComponentNodeData, setSelectedComponentNodeData] = useState({})
+    const [showOptionalParams, setShowOptionalParams] = useState(false)
 
     // Track the last processed input values to prevent infinite loops using useState
     const [lastProcessedInputs, setLastProcessedInputs] = useState({
@@ -37,7 +47,28 @@ export const ConfigInput = ({ data, inputParam, disabled = false, arrayIndex = n
         setExpanded(isExpanded)
     }
 
+    // Filter inputParams based on showOptionalParams toggle
+    const getFilteredInputParams = () => {
+        return (selectedComponentNodeData.inputParams ?? [])
+            .filter((inputParam) => !inputParam.hidden)
+            .filter((inputParam) => inputParam.display !== false)
+            .filter((inputParam) => {
+                // If showOptionalParams is false, hide optional parameters
+                if (!showOptionalParams && inputParam.optional === true) return false
+                return true
+            })
+    }
+
+    // Check if there are any optional parameters to show the toggle
+    const hasOptionalParams = useMemo(() => {
+        return (selectedComponentNodeData.inputParams ?? [])
+            .filter((inputParam) => !inputParam.hidden)
+            .filter((inputParam) => inputParam.display !== false)
+            .some(param => param.optional === true)
+    }, [selectedComponentNodeData.inputParams])
+
     const onCustomDataChange = ({ inputParam, newValue }) => {
+        console.log('onCustomDataChange:', inputParam, newValue)
         let nodeData = cloneDeep(selectedComponentNodeData)
 
         const updatedInputs = { ...nodeData.inputs }
@@ -296,19 +327,42 @@ export const ConfigInput = ({ data, inputParam, disabled = false, arrayIndex = n
                         <Typography sx={{ ml: 1 }}>{selectedComponentNodeData?.label} Parameters</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        {(selectedComponentNodeData.inputParams ?? [])
-                            .filter((inputParam) => !inputParam.hidden)
-                            .filter((inputParam) => inputParam.display !== false)
-                            .map((inputParam, index) => (
-                                <NodeInputHandler
-                                    disabled={disabled}
-                                    key={index}
-                                    inputParam={inputParam}
-                                    data={selectedComponentNodeData}
-                                    isAdditionalParams={true}
-                                    onCustomDataChange={onCustomDataChange}
+                        {/* Toggle for showing optional parameters */}
+                        {hasOptionalParams && (
+                            <Box sx={{ mb: 2, pb: 1, px: 2 }}>
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={showOptionalParams}
+                                            onChange={(e) => setShowOptionalParams(e.target.checked)}
+                                            color="primary"
+                                            size="small"
+                                        />
+                                    }
+                                    label={
+                                        <Typography variant="body2" color="text.secondary">
+                                            Show optional parameters
+                                        </Typography>
+                                    }
+                                    sx={{
+                                        '& .MuiFormControlLabel-label': {
+                                            fontSize: '0.875rem'
+                                        }
+                                    }}
                                 />
-                            ))}
+                            </Box>
+                        )}
+
+                        {getFilteredInputParams().map((inputParam, index) => (
+                            <NodeInputHandler
+                                disabled={disabled}
+                                key={index}
+                                inputParam={inputParam}
+                                data={selectedComponentNodeData}
+                                isAdditionalParams={true}
+                                onCustomDataChange={onCustomDataChange}
+                            />
+                        ))}
                     </AccordionDetails>
                 </Accordion>
             </Box>

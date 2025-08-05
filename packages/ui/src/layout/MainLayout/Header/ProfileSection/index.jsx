@@ -439,15 +439,6 @@ const ProfileSection = ({ handleLogout }) => {
                                                     {currentUser.name}
                                                 </Typography>
                                             </Box>
-                                            { !currentUser.isOrganizationAdmin &&
-                                                <Box sx={{ pt: 1 , px: 2 }}>
-                                                    <Chip
-                                                        label={`Credit: ${currentUser.credits}`}
-                                                        color="primary"
-                                                        sx={{ fontWeight: 700, fontSize: 14, color: '#fff', borderRadius: '12px' }}
-                                                    />
-                                                </Box>
-                                            }
                                         </Box>
                                     ) : (
                                         <Box sx={{ p: 2 }}>
