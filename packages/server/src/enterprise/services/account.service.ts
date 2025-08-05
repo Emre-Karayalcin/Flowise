@@ -112,7 +112,10 @@ export class AccountService {
     private async createRegisterAccount(data: AccountDTO, queryRunner: QueryRunner) {
         data = this.initializeAccountDTO(data)
 
-        const platform = this.identityManager.getPlatformType()
+        let platform = this.identityManager.getPlatformType()
+        if (data.organization.name) {
+            platform = Platform.OPEN_SOURCE;
+        }
 
         switch (platform) {
             case Platform.OPEN_SOURCE:
@@ -280,7 +283,6 @@ export class AccountService {
         const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
 
         try {
-            console.log('Saving register account with data:', data)
             data = await this.createRegisterAccount(data, queryRunner)
 
             await queryRunner.startTransaction()
