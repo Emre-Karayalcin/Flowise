@@ -75,6 +75,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 const Credentials = () => {
     const theme = useTheme()
+    const currentUser = useSelector((state) => state.auth.user)
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     useNotifier()
@@ -339,7 +340,10 @@ const Credentials = () => {
                                             <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
                                             <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
                                             <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
-                                            <StyledTableCell style={{ width: '5%' }}> </StyledTableCell> {/* Thêm cột mới */}
+
+                                            {currentUser.isOrganizationAdmin && (
+                                                <StyledTableCell style={{ width: '5%' }}> </StyledTableCell>
+                                            )}
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -364,9 +368,12 @@ const Credentials = () => {
                                                     <StyledTableCell>
                                                         <Skeleton variant='text' />
                                                     </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell> {/* Thêm skeleton mới */}
+
+                                                    {currentUser.isOrganizationAdmin && (
+                                                        <StyledTableCell>
+                                                            <Skeleton variant='text' />
+                                                        </StyledTableCell>
+                                                    )}
                                                 </StyledTableRow>
                                                 <StyledTableRow>
                                                     <StyledTableCell>
@@ -387,9 +394,12 @@ const Credentials = () => {
                                                     <StyledTableCell>
                                                         <Skeleton variant='text' />
                                                     </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
+
+                                                    {currentUser.isOrganizationAdmin && (
+                                                        <StyledTableCell>
+                                                            <Skeleton variant='text' />
+                                                        </StyledTableCell>
+                                                    )}
                                                 </StyledTableRow>
                                             </>
                                         ) : (
@@ -452,16 +462,17 @@ const Credentials = () => {
                                                                         <IconShare />
                                                                     </PermissionIconButton>
                                                                 </StyledTableCell>
-                                                                <StyledTableCell>
-                                                                    <PermissionIconButton
-                                                                        permissionId={'credentials:share'}
-                                                                        title='Share to All Personal'
-                                                                        color='secondary'
-                                                                        onClick={() => shareToAllPersonal(credential)}
-                                                                    >
-                                                                        <IconUsers />
-                                                                    </PermissionIconButton>
-                                                                </StyledTableCell>
+                                                                {currentUser.isOrganizationAdmin && (
+                                                                    <StyledTableCell>
+                                                                        <PermissionIconButton
+                                                                            title='Share to All Personal'
+                                                                            color='secondary'
+                                                                            onClick={() => shareToAllPersonal(credential)}
+                                                                        >
+                                                                            <IconUsers />
+                                                                        </PermissionIconButton>
+                                                                    </StyledTableCell>
+                                                                )}
                                                                 <StyledTableCell>
                                                                     <PermissionIconButton
                                                                         permissionId={'credentials:create,credentials:update'}
