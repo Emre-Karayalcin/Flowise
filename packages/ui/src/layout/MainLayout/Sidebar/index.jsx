@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Box, Drawer, useMediaQuery } from '@mui/material'
+import { Box, Drawer, useMediaQuery, Avatar, Chip, Typography, Card, CardContent } from '@mui/material'
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -16,6 +16,73 @@ import CloudMenuList from '@/layout/MainLayout/Sidebar/CloudMenuList'
 
 // store
 import { drawerWidth, headerHeight } from '@/store/constant'
+
+// User Info Component
+const UserInfoCard = () => {
+    const theme = useTheme()
+    const currentUser = useSelector((state) => state.auth.user)
+
+    if (!currentUser) return null
+    if (currentUser.isOrganizationAdmin) return null
+
+    return (
+        <Card 
+            sx={{ 
+                mx: 2, 
+                mt: 'auto',
+                backgroundColor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
+                borderRadius: 2
+            }}
+        >
+            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar 
+                        sx={{ 
+                            width: 40, 
+                            height: 40,
+                            bgcolor: theme.palette.primary.main,
+                            fontSize: '1rem',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                    </Avatar>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                fontWeight: 600,
+                                color: theme.palette.text.primary,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                mb: 0.5
+                            }}
+                        >
+                            {currentUser.name || 'User'}
+                        </Typography>
+                        <Chip
+                            label={`${currentUser.credits || 0} Credits`}
+                            size="small"
+                            sx={{ 
+                                height: 20,
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                                bgcolor: theme.palette.primary.light,
+                                color: theme.palette.primary.contrastText,
+                                borderRadius: '10px',
+                                '& .MuiChip-label': {
+                                    px: 1
+                                }
+                            }}
+                        />
+                    </Box>
+                </Box>
+            </CardContent>
+        </Card>
+    )
+}
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
 
@@ -42,17 +109,20 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     style={{
                         height: !matchUpMd ? 'calc(100vh - 56px)' : `calc(100vh - ${headerHeight}px)`,
                         display: 'flex',
-                        flexDirection: 'column'
+                        flexDirection: 'column',
+                        paddingBottom: 20
                     }}
                 >
                     <MenuList />
                     <CloudMenuList />
+                    <UserInfoCard />
                 </PerfectScrollbar>
             </BrowserView>
             <MobileView>
-                <Box sx={{ px: 2 }}>
+                <Box sx={{ px: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
                     <MenuList />
                     <CloudMenuList />
+                    <UserInfoCard />
                 </Box>
             </MobileView>
         </>

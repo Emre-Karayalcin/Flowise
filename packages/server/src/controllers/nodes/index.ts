@@ -27,7 +27,6 @@ const getAllowedLLMSNames = () => ['openAI']
 
 const getAllowedChatModelNames = () => [
     'chatOpenAI',
-    'chatOpenAICustom',
     'chatAnthropic',
     'chatGoogleGenerativeAI',
     'chatDeepseek',
@@ -160,7 +159,6 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
             if (loadMethod === 'listModels') {
                 const allowedModelNames = [
                     'chatOpenAI',
-                    'chatOpenAICustom',
                     'chatAnthropic',
                     'chatGoogleGenerativeAI',
                     'chatDeepseek',

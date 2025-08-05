@@ -77,22 +77,6 @@ const dashboard = {
                     breadcrumbs: true,
                 },
                 {
-                    id: 'assistants',
-                    title: 'Assistants',
-                    type: 'item',
-                    url: '/assistants',
-                    icon: icons.IconRobot,
-                    breadcrumbs: true,
-                    permission: 'assistants:view'
-                },
-            ]
-        },
-        {
-            id: 'operations',
-            title: 'Agents',
-            type: 'group',
-            children: [
-                {
                     id: 'agentflows',
                     title: 'Agents',
                     type: 'item',
@@ -100,6 +84,15 @@ const dashboard = {
                     icon: icons.IconUsersGroup,
                     breadcrumbs: true,
                     permission: 'agentflows:view'
+                },
+                {
+                    id: 'assistants',
+                    title: 'Assistants',
+                    type: 'item',
+                    url: '/assistants',
+                    icon: icons.IconRobot,
+                    breadcrumbs: true,
+                    permission: 'assistants:view'
                 },
                 {
                     id: 'executions',

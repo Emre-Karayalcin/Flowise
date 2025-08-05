@@ -18,7 +18,10 @@ const getAllTemplates = async (req: Request, res: Response, next: NextFunction) 
             'List Output Parser',
             'Query Engine',
             'SQL DB Chain',
-            'SubQuestion Query Engine'
+            'SubQuestion Query Engine',
+            'SendGrid Email',
+            'Get Current DateTime',
+            'Simple DB Chain'
         ]
         
         const filteredResponse = apiResponse.filter((template: any) => 

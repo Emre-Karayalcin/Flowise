@@ -116,18 +116,106 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         return nodes
     }
 
+    const llmNodeNames = [
+        "ChatAnthropic", 
+        "ChatGoogleGenerativeAI", 
+        "ChatOpenAI", 
+        "ChatOpenAI Custom", 
+        "ChatPerplexity", 
+        "ChatDeepseek", 
+        "GroqChat"
+    ]
+
+    const toolNodeNames = [
+        "Custom Tool",
+        "Gmail",
+        "Google Calendar", 
+        "Google Docs",
+        "Google Drive",
+        "Google Custom Search",
+        "Google Sheets",
+        "Read File",
+        "Requests Delete",
+        "Requests Get", 
+        "Requests Post",
+        "Requests Put",
+        "Write File",
+        "Slack MCP"
+    ]
+
+    const isSimilarToLLMNames = (searchTerm) => {
+        const normalizedSearch = searchTerm.toLowerCase()
+        return llmNodeNames.some(llmName => {
+            const normalizedLLM = llmName.toLowerCase()
+            return normalizedLLM.includes(normalizedSearch) || 
+                normalizedSearch.includes(normalizedLLM.replace(/chat|custom/gi, '').trim()) ||
+                (normalizedSearch.includes('openai') && normalizedLLM.includes('openai')) ||
+                (normalizedSearch.includes('anthropic') && normalizedLLM.includes('anthropic')) ||
+                (normalizedSearch.includes('google') && normalizedLLM.includes('google')) ||
+                (normalizedSearch.includes('perplexity') && normalizedLLM.includes('perplexity')) ||
+                (normalizedSearch.includes('deepseek') && normalizedLLM.includes('deepseek')) ||
+                (normalizedSearch.includes('groq') && normalizedLLM.includes('groq'))
+        })
+    }
+
+    const isSimilarToToolNames = (searchTerm) => {
+        const normalizedSearch = searchTerm.toLowerCase()
+        return toolNodeNames.some(toolName => {
+            const normalizedTool = toolName.toLowerCase()
+            return normalizedTool.includes(normalizedSearch) || 
+                normalizedSearch.includes(normalizedTool.replace(/custom|tool/gi, '').trim()) ||
+                // Check for common variations
+                (normalizedSearch.includes('gmail') && normalizedTool.includes('gmail')) ||
+                (normalizedSearch.includes('calendar') && normalizedTool.includes('calendar')) ||
+                (normalizedSearch.includes('docs') && normalizedTool.includes('docs')) ||
+                (normalizedSearch.includes('drive') && normalizedTool.includes('drive')) ||
+                (normalizedSearch.includes('search') && normalizedTool.includes('search')) ||
+                (normalizedSearch.includes('sheets') && normalizedTool.includes('sheets')) ||
+                (normalizedSearch.includes('file') && (normalizedTool.includes('read file') || normalizedTool.includes('write file'))) ||
+                (normalizedSearch.includes('requests') && normalizedTool.includes('requests')) ||
+                (normalizedSearch.includes('slack') && normalizedTool.includes('slack')) ||
+                (normalizedSearch.includes('google') && normalizedTool.includes('google'))
+        })
+    }
+
+    // Function to get LLM nodes
+    const getLLMNodes = () => {
+        return nodesData.filter(nd => nd.label === 'LLM' && nd.category === 'Agent Flows')
+    }
+
+    // Function to get Tool nodes
+    const getToolNodes = () => {
+        return nodesData.filter(nd => nd.label === 'Tool' && nd.category === 'Agent Flows')
+    }
+
     const getSearchedNodes = (value) => {
         if (isAgentCanvas) {
             const nodes = nodesData.filter((nd) => !blacklistCategoriesForAgentCanvas.includes(nd.category))
             nodes.push(...addException())
-            const passed = nodes.filter((nd) => {
+            
+            let passed = nodes.filter((nd) => {
                 const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
                 const passesLabel = nd.label.toLowerCase().includes(value.toLowerCase())
                 const passesCategory = nd.category.toLowerCase().includes(value.toLowerCase())
                 return passesName || passesCategory || passesLabel
             })
+            
+            if (isSimilarToLLMNames(value)) {
+                const llmNodes = getLLMNodes().filter(llmNode => 
+                    !passed.some(existingNode => existingNode.name === llmNode.name)
+                )
+                passed = [...passed, ...llmNodes]
+            }
+
+            if (isSimilarToToolNames(value)) {
+                const toolNodes = getToolNodes().filter(toolNode => 
+                    !passed.some(existingNode => existingNode.name === toolNode.name)
+                )
+                passed = [...passed, ...toolNodes]
+            }
             return passed
         }
+        
         let nodes = nodesData.filter((nd) => nd.category !== 'Multi Agents' && nd.category !== 'Sequential Agents')
 
         for (const category in blacklistForChatflowCanvas) {
@@ -228,7 +316,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 accordianCategories[a.category] = isFilter ? true : false
                 return r
             }, Object.create(null))
-
+            console.log('Grouped Nodes:', result, newTabValue)
             const filteredResult = {}
             for (const category in result) {
                 if (isAgentCanvasV2) {

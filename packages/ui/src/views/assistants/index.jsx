@@ -20,13 +20,13 @@ const cards = [
         iconText: 'Custom',
         gradient: 'linear-gradient(135deg, #fff8e14e 0%, #ffcc802f 100%)'
     },
-    {
-        title: 'OpenAI Assistant',
-        description: 'Create assistant using OpenAI Assistant API',
-        icon: <IconBrandOpenai />,
-        iconText: 'OpenAI',
-        gradient: 'linear-gradient(135deg, #c9ffd85f 0%, #a0f0b567 100%)'
-    },
+    // {
+    //     title: 'OpenAI Assistant',
+    //     description: 'Create assistant using OpenAI Assistant API',
+    //     icon: <IconBrandOpenai />,
+    //     iconText: 'OpenAI',
+    //     gradient: 'linear-gradient(135deg, #c9ffd85f 0%, #a0f0b567 100%)'
+    // },
     // {
     //     title: 'Azure Assistant (Coming Soon)',
     //     description: 'Create assistant using Azure Assistant API',
