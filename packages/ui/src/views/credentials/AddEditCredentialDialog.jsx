@@ -279,7 +279,11 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                     googleCalendarOAuth2: 'https://www.googleapis.com/auth/calendar',
                     googleSheetsOAuth2: 'https://www.googleapis.com/auth/spreadsheets',
                     googleDocsOAuth2: 'https://www.googleapis.com/auth/documents',
-                    gmailOAuth2: 'https://www.googleapis.com/auth/gmail.readonly',
+                    gmailOAuth2: [
+                        'https://www.googleapis.com/auth/gmail.send',
+                        'https://www.googleapis.com/auth/gmail.readonly',
+                        'https://www.googleapis.com/auth/gmail.modify'
+                    ].join(' '),
                     googleDriveOAuth2: 'https://www.googleapis.com/auth/drive.file'
                 }
 
