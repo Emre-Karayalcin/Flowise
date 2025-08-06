@@ -138,7 +138,7 @@ const Chatflows = () => {
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Search Name or Category'
-                        title='Nuggets'
+                        title='CODE'
                         description='Build single-agent systems, chatbots and simple LLM flows'
                     >
                         <ToggleButtonGroup
@@ -223,7 +223,7 @@ const Chatflows = () => {
                                     alt='WorkflowEmptySVG'
                                 />
                             </Box>
-                            <div>No Nuggets Yet</div>
+                            <div>No CODE Yet</div>
                         </Stack>
                     )}
                 </Stack>

@@ -19,7 +19,7 @@ const HowToUseFunctionDialog = ({ show, onCancel }) => {
             </DialogTitle>
             <DialogContent>
                 <ul>
-                    <li style={{ marginTop: 10 }}>You can use any libraries imported in Nuggets</li>
+                    <li style={{ marginTop: 10 }}>You can use any libraries imported in CODE</li>
                     <li style={{ marginTop: 10 }}>
                         You can use properties specified in Input Schema as variables with prefix $:
                         <ul style={{ marginTop: 10 }}>

@@ -1,12 +1,12 @@
 <!-- markdownlint-disable MD030 -->
 
-# Nuggets UI
+# CODE UI
 
 English | [中文](./README-ZH.md)
 
-React frontend ui for Nuggets.
+React frontend ui for CODE.
 
-![Nuggets](https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true)
+![CODE](https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true)
 
 Install:
 

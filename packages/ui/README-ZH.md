@@ -4,9 +4,9 @@
 
 [English](./README.md) | 中文
 
-Nuggets 的 React 前端界面。
+CODE 的 React 前端界面。
 
-![Nuggets](https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true)
+![CODE](https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true)
 
 安装：
 

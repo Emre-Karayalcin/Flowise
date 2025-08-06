@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2023-present FlowiseAI, Inc.
  *
- * The Enterprise and Cloud versions of Nuggets are licensed under the [Commercial License](https://github.com/FlowiseAI/Flowise/tree/main/packages/server/src/enterprise/LICENSE.md).
+ * The Enterprise and Cloud versions of CODE are licensed under the [Commercial License](https://github.com/FlowiseAI/Flowise/tree/main/packages/server/src/enterprise/LICENSE.md).
  * Unauthorized copying, modification, distribution, or use of the Enterprise and Cloud versions is strictly prohibited without a valid license agreement from FlowiseAI, Inc.
  *
  * The Open Source version is licensed under the Apache License, Version 2.0 (the "License")

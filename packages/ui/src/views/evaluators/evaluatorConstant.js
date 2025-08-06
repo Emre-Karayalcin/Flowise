@@ -70,7 +70,7 @@ export const evaluators = [
         type: 'numeric',
         label: 'Total API Latency',
         name: 'apiLatency',
-        description: 'Total time taken for the Nuggets Prediction API call (milliseconds).'
+        description: 'Total time taken for the CODE Prediction API call (milliseconds).'
     },
     {
         type: 'numeric',

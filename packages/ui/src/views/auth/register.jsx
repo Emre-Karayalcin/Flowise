@@ -323,7 +323,7 @@ const RegisterPage = () => {
                             textAlign: 'center'
                         }}
                     >
-                        Welcome to Nuggets
+                        Welcome to CODE
                     </Typography>
                     <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
                         AI-powered workflow automation platform
@@ -390,7 +390,7 @@ const RegisterPage = () => {
                             Create your account
                         </Typography>
                         <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', mb: 3, fontSize: 15 }}>
-                            Join Nuggets to start building AI-powered workflows.
+                            Join CODE to start building AI-powered workflows.
                         </Typography>
                         {/* Form */}
                         <form onSubmit={register} data-rewardful>

@@ -258,7 +258,7 @@ const SignInPage = () => {
                         textAlign: 'center'
                     }}
                 >
-                    Welcome to Nuggets
+                    Welcome to CODE
                 </Typography>
                 <Typography sx={{ color: isDarkMode ? '#bdbdbd' : '#6b7280', fontSize: 16, textAlign: 'center', mb: 0 }}>
                     AI-powered workflow automation platform

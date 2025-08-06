@@ -171,7 +171,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Nuggets Inc\"}",
+                    "promptValues": "{\"company\":\"CODE Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -273,7 +273,7 @@
                     "tools": ["{{retrieverTool_0.data.instance}}"],
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Nuggets Inc\",\"conversation\":\"{{customFunction_0.data.instance}}\"}",
+                    "promptValues": "{\"company\":\"CODE Inc\",\"conversation\":\"{{customFunction_0.data.instance}}\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -694,7 +694,7 @@
                 "inputs": {
                     "functionInputVariables": "",
                     "functionName": "",
-                    "javascriptFunction": "// Simulating fetching conversation between system and customer\nconst conversations =[\n  {\n    \"role\": \"bot\",\n    \"content\": \"Hey how can I help you?\",\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"There is a bug when installing Nuggets\",\n  },\n  {\n    \"role\": \"bot\",\n    \"content\": \"Can you tell me what was the error?\",\n  }\n];\n\nreturn conversations;"
+                    "javascriptFunction": "// Simulating fetching conversation between system and customer\nconst conversations =[\n  {\n    \"role\": \"bot\",\n    \"content\": \"Hey how can I help you?\",\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"There is a bug when installing CODE\",\n  },\n  {\n    \"role\": \"bot\",\n    \"content\": \"Can you tell me what was the error?\",\n  }\n];\n\nreturn conversations;"
                 },
                 "outputAnchors": [
                     {

@@ -536,7 +536,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                     </Typography>
                                     <Typography variant='overline'>
                                         <Checkbox defaultChecked size='small' label='All' value='Chatflow' onChange={onChangeFlowType} />{' '}
-                                        Nuggets
+                                        CODE
                                         <Checkbox
                                             defaultChecked
                                             size='small'

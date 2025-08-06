@@ -170,7 +170,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Nuggets Inc\",\"technology\":\"React, NodeJS, ExpressJS, Tailwindcss\"}",
+                    "promptValues": "{\"company\":\"CODE Inc\",\"technology\":\"React, NodeJS, ExpressJS, Tailwindcss\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -272,7 +272,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Nuggets Inc\"}",
+                    "promptValues": "{\"company\":\"CODE Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
