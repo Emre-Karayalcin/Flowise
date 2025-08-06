@@ -214,7 +214,7 @@ const Dashboard = () => {
                         mb: 0.5
                     }}
                 >
-                    What's today's Nugget-worthy idea?
+                    What's today's CODE-worthy idea?
                 </Typography>
             </Box>
             <Box
